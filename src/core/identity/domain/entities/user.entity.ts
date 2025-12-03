@@ -1,8 +1,8 @@
 export default class User {
-    private id:string;
-    private name: string;
-    private email:string;
-    private password:string;
+    private _id:string;
+    private _name: string;
+    private _email:string;
+    private _password:string;
 
     constructor(id:string, name:string,email:string,password:string){
 
@@ -12,22 +12,22 @@ export default class User {
 
         if(!password) throw new Error('Password can not be empty')    
 
-        this.id = id,
-        this.email = email,
-        this.name = name,
-        this.password = password
+        this._id = id,
+        this._email = email,
+        this._name = name,
+        this._password = password
     }
 
-    getId(){
-        return this.id
+    get id(){
+        return this._id
     }
 
-    getEmail(){
-        return this.email
+    get email(){
+        return this._email
     }
     
-    getName(){
-        return this.name
+    get name(){
+        return this._name
     }
 
 }
