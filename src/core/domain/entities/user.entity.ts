@@ -1,33 +1,26 @@
 export default class User {
-    private _id:string;
-    private _name: string;
-    private _email:string;
-    private _password:string;
+  constructor(
+    private _id: string,
+    private _name: string,
+    private _email: string,
+    private _password: string,
+  ) {
+    if (!_email) throw new Error('Email can not be empty');
 
-    constructor(id:string, name:string,email:string,password:string){
+    if (!_name) throw new Error('Name can not be empty');
 
-        if(!email) throw new Error('Email can not be empty')
+    if (!_password) throw new Error('Password can not be empty');
+  }
 
-        if(!name) throw new Error('Name can not be empty')    
+  get id() {
+    return this._id;
+  }
 
-        if(!password) throw new Error('Password can not be empty')    
+  get email() {
+    return this._email;
+  }
 
-        this._id = id,
-        this._email = email,
-        this._name = name,
-        this._password = password
-    }
-
-    get id(){
-        return this._id
-    }
-
-    get email(){
-        return this._email
-    }
-    
-    get name(){
-        return this._name
-    }
-
+  get name() {
+    return this._name;
+  }
 }
