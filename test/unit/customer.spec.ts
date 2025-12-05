@@ -1,4 +1,4 @@
-import {CustomerProfile} from '../../src/core/identity/domain/entities/customer-profile.entity';
+import {CustomerProfile} from '../../src/core/domain/entities/customer-profile.entity';
 
 
 describe('CustomerProfile entity', () => {

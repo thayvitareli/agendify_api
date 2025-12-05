@@ -1,4 +1,4 @@
-import User from '../../src/core/identity/domain/entities/user.entity';
+import User from '../../src/core/domain/entities/user.entity';
 
 
 describe('User entity', () => {
