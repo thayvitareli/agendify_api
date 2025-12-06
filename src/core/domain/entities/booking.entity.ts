@@ -1,4 +1,4 @@
-export class Schedule {
+export class Booking {
   constructor(
     private readonly _id: string,
     private readonly _barbershopId: string,

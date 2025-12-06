@@ -1,4 +1,4 @@
-import { Schedule } from '../../src/core/domain/entities/schedule.entity';
+import { Booking } from '../../src/core/domain/entities/booking.entity';
 
 describe('Schedule entity', () => {
   it('Should throw an error if end is after start', () => {
@@ -7,7 +7,7 @@ describe('Schedule entity', () => {
 
     expect(
       () =>
-        new Schedule(
+        new Booking(
           'shId',
           'barbershopId',
           'customerId',
@@ -22,7 +22,7 @@ describe('Schedule entity', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 13:30');
 
-    const shedule = new Schedule(
+    const booking = new Booking(
       'shId',
       'barbershopId',
       'customerId',
@@ -31,18 +31,18 @@ describe('Schedule entity', () => {
       endDate,
     );
 
-    expect(shedule.id).toBe('shId');
-    expect(shedule.barbershopId).toBe('barbershopId');
-    expect(shedule.serviceId).toBe('serviceId');
-    expect(shedule.startAt).toBe(startDate);
-    expect(shedule.endAt).toBe(endDate);
+    expect(booking.id).toBe('shId');
+    expect(booking.barbershopId).toBe('barbershopId');
+    expect(booking.serviceId).toBe('serviceId');
+    expect(booking.startAt).toBe(startDate);
+    expect(booking.endAt).toBe(endDate);
   });
 
   it('Should throw an error if try cancel a schedule cancelled', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 13:30');
 
-    const shedule = new Schedule(
+    const booking = new Booking(
       'shId',
       'barbershopId',
       'customerId',
@@ -51,16 +51,16 @@ describe('Schedule entity', () => {
       endDate,
     );
 
-    shedule.cancel();
+    booking.cancel();
 
-    expect(() => shedule.cancel()).toThrow('Schedule already canceled.');
+    expect(() => booking.cancel()).toThrow('Schedule already canceled.');
   });
 
   it('Should cancel a schedule', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 13:30');
 
-    const shedule = new Schedule(
+    const booking = new Booking(
       'shId',
       'barbershopId',
       'customerId',
@@ -69,8 +69,8 @@ describe('Schedule entity', () => {
       endDate,
     );
 
-    shedule.cancel();
+    booking.cancel();
 
-    expect(shedule.status).toBe('CANCELED');
+    expect(booking.status).toBe('CANCELED');
   });
 });
