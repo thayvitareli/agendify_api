@@ -1,4 +1,4 @@
-export class CustomerProfile {
+export class Customer {
   constructor(
     private readonly _id: string,
     private readonly _userId: string,

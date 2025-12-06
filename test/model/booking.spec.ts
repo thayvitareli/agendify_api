@@ -1,6 +1,6 @@
-import { Booking } from '../../src/core/domain/entities/booking.entity';
+import { Booking } from '../../src/modules/booking/domain/model/booking.model';
 
-describe('Schedule entity', () => {
+describe('Booking Model', () => {
   it('Should throw an error if end is after start', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 12:00');
@@ -18,7 +18,7 @@ describe('Schedule entity', () => {
     ).toThrow('End must be after start.');
   });
 
-  it('Should instance a new Schedule', () => {
+  it('Should instance a new Booking', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 13:30');
 
@@ -38,7 +38,7 @@ describe('Schedule entity', () => {
     expect(booking.endAt).toBe(endDate);
   });
 
-  it('Should throw an error if try cancel a schedule cancelled', () => {
+  it('Should throw an error if try cancel a booking cancelled', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 13:30');
 
@@ -56,7 +56,7 @@ describe('Schedule entity', () => {
     expect(() => booking.cancel()).toThrow('Schedule already canceled.');
   });
 
-  it('Should cancel a schedule', () => {
+  it('Should cancel a booking', () => {
     const startDate = new Date('2025-02-01 13:00');
     const endDate = new Date('2025-02-01 13:30');
 

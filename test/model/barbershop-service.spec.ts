@@ -1,6 +1,6 @@
-import { BarbershopService } from '../../src/core/domain/entities/barbershop-service.entity';
+import { BarbershopService } from '../../src/modules/barbershop-service/domain/model/barbershop-service.model';
 
-describe('BarbershopService entity', () => {
+describe('BarbershopService Model', () => {
   it('Should throw an error if name is empty', () => {
     expect(
       () => new BarbershopService('serviceId', 'barbershopId', '', 10, 20),
