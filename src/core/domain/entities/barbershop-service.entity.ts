@@ -1,4 +1,4 @@
-export class Service {
+export class BarbershopService {
   constructor(
     private readonly _id: string,
     private readonly _barbershopId: string,
