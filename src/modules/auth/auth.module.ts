@@ -6,10 +6,10 @@ import { BcryptPasswordHasherAdapter } from './infrasctructure/bcrypt-password-h
   controllers: [AuthController],
   providers: [
     {
-      provide: 'IPasswordHasherPort',
+      provide: 'IPasswordHasher',
       useClass: BcryptPasswordHasherAdapter,
     },
   ],
-  exports: ['IPasswordHasherPort'],
+  exports: ['IPasswordHasher'],
 })
 export class AuthModule {}
