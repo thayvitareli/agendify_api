@@ -6,10 +6,17 @@ export default class User {
     private _password?: string,
   ) {
     if (!_email) throw new Error('Email can not be empty');
+    User.validateEmail(_email);
 
     if (!_name) throw new Error('Name can not be empty');
 
     if (_password == '') throw new Error('Password can not be empty');
+  }
+
+  static validateEmail(email: string) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error('Invalid email');
+    }
   }
 
   get id() {
