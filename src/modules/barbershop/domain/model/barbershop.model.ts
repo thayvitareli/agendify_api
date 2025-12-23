@@ -1,31 +1,38 @@
-import { Address } from "../value_objects/address.vo";
+import { Address } from '../value_objects/address.vo';
 
 export class Barbershop {
-     private _id: string;
-    private _ownerUserId: string;
-    private _name:string;
-     private _address: Address
+  private _id: string;
+  private _ownerUserId: string;
+  private _name: string;
+  private _address: Address;
+  private _phone?: string;
 
-    
   constructor(
-   id:string, userId:string, phone:string, name:string,address: Address,
+    id: string,
+    userId: string,
+    phone: string,
+    name: string,
+    address: Address,
   ) {
+    if (!userId) throw new Error('UserId can not be empyt');
+    if (!name) throw new Error('Name can not be empyt');
+    if (!id) throw new Error('Id can not be empyt');
+    if (phone != null && !Barbershop.isValidPhone(phone)) {
+      throw new Error('Invalid phone');
+    }
 
-    if(!userId) throw new Error('UserId can not be empyt')
-    if(!name) throw new Error('Name can not be empyt')
-
-
-    this._id=id;
-    this._ownerUserId=userId;
-    this._name=name;
-    this._address =address;
+    this._id = id;
+    this._ownerUserId = userId;
+    this._name = name;
+    this._address = address;
+    this._phone = phone;
   }
 
   get id() {
     return this._id;
   }
 
-   get name() {
+  get name() {
     return this._name;
   }
 
@@ -33,9 +40,21 @@ export class Barbershop {
     return this._ownerUserId;
   }
 
-   get address() {
+  get phone() {
+    return this._phone ?? null;
+  }
+
+  get address() {
     return this._address;
   }
 
- 
+  static validatePhone(phone: string) {
+    if (!/^\d{8,}$/.test(phone)) {
+      throw new Error('Invalid phone');
+    }
+  }
+
+  private static isValidPhone(phone: string) {
+    return /^\d{8,}$/.test(phone);
+  }
 }
