@@ -53,7 +53,7 @@ describe('Booking Model', () => {
 
     booking.cancel();
 
-    expect(() => booking.cancel()).toThrow('Schedule already canceled.');
+    expect(() => booking.cancel()).toThrow('Booking already canceled.');
   });
 
   it('Should cancel a booking', () => {
