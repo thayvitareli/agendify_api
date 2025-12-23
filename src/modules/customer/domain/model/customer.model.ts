@@ -6,6 +6,19 @@ export class Customer {
   ) {
     if (!_id) throw new Error('Customer ID cannot be empty.');
     if (!_userId) throw new Error('User ID cannot be empty.');
+    if (this._phone != null && !Customer.isValidPhone(this._phone)) {
+      throw new Error('Invalid phone');
+    }
+  }
+
+  static validatePhone(phone: string) {
+    if (!/^\d{8,}$/.test(phone)) {
+      throw new Error('Invalid phone');
+    }
+  }
+
+  private static isValidPhone(phone: string) {
+    return /^\d{8,}$/.test(phone);
   }
 
   get id() {
