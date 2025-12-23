@@ -5,4 +5,8 @@ export class BcryptPasswordHasherAdapter implements IPasswordHasher {
   hash(pass: string): Promise<string> {
     return bcrypt.hash(pass, process.env.SALT);
   }
+
+  async compare(pass: string, hashedPass: string): Promise<boolean> {
+    return await bcrypt.compare(pass, hashedPass);
+  }
 }
