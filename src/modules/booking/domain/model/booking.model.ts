@@ -14,7 +14,7 @@ export class Booking {
 
   cancel() {
     if (this._status === 'CANCELED') {
-      throw new Error('Schedule already canceled.');
+      throw new Error('Booking already canceled.');
     }
     this._status = 'CANCELED';
     this._canceledAt = new Date();
