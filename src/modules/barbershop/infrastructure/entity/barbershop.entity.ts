@@ -22,6 +22,9 @@ export class BarbershopEntity {
   name: string;
 
   @Column()
+  phone: string;
+
+  @Column()
   street: string;
 
   @Column()
