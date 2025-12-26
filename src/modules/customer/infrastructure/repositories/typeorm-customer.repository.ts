@@ -11,19 +11,17 @@ export class TypeORMCustomerRepository implements ICustomerRepository {
     this.repository = repository;
   }
 
-  async save(customer: Customer): Promise<void> {
-    const entity = this.repository.create({
-      id: (customer as any).id,
-      userId: (customer as any).userId,
-      phone: (customer as any).phone ?? null,
-    });
-    await this.repository.save(entity);
+  async save(customer: Customer): Promise<Customer | null> {
+    const customerEntity = CustomerMapper.toPersistence(customer);
+
+    const savedEntity = await this.repository.save(customerEntity);
+
+    return savedEntity ? CustomerMapper.toDomain(savedEntity) : null;
   }
 
   async findById(id: string): Promise<Customer | null> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['user'],
     });
     return entity ? CustomerMapper.toDomain(entity) : null;
   }
