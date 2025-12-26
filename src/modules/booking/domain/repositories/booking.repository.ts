@@ -1,11 +1,11 @@
 import { Booking } from '../model/booking.model';
 
 export interface IBookingRepository {
-  save(booking: Booking): Promise<void>;
+  save(booking: Booking): Promise<Booking | null>;
   findById(id: string): Promise<Booking | null>;
-  findByCustomerId(customerId: string): Promise<Booking[]>;
-  findByBarbershopId(barbershopId: string): Promise<Booking[]>;
-  findByBarbershopIdBetween(
+  findManyByCustomerId(customerId: string): Promise<Booking[]>;
+  findManyByBarbershopId(barbershopId: string): Promise<Booking[]>;
+  findManyByBarbershopIdBetween(
     barbershopId: string,
     from: Date,
     to: Date,

@@ -41,7 +41,7 @@ export class RegisterBookingUseCase {
 
     dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
 
-    const bookings = await this.bookingRepo.findByBarbershopIdBetween(
+    const bookings = await this.bookingRepo.findManyByBarbershopIdBetween(
       input.barbershopId,
       dayStart,
       dayEnd,

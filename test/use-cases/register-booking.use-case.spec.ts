@@ -10,9 +10,9 @@ describe('RegisterBookingUseCase', () => {
   const bookingRepo: jest.Mocked<IBookingRepository> = {
     save: jest.fn(),
     findById: jest.fn(),
-    findByCustomerId: jest.fn(),
-    findByBarbershopId: jest.fn(),
-    findByBarbershopIdBetween: jest.fn(),
+    findManyByCustomerId: jest.fn(),
+    findManyByBarbershopId: jest.fn(),
+    findManyByBarbershopIdBetween: jest.fn(),
   };
 
   const customerRepo: jest.Mocked<ICustomerRepository> = {
@@ -29,8 +29,8 @@ describe('RegisterBookingUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    bookingRepo.findByBarbershopIdBetween.mockResolvedValue([]);
-    bookingRepo.save.mockResolvedValue();
+    bookingRepo.findManyByBarbershopIdBetween.mockResolvedValue([]);
+    bookingRepo.save.mockResolvedValue({} as any);
     customerRepo.findById.mockResolvedValue(
       new Customer('c-1', 'u-1', '999999999'),
     );
@@ -56,7 +56,7 @@ describe('RegisterBookingUseCase', () => {
 
     const result = await useCase.execute(input);
 
-    expect(bookingRepo.findByBarbershopIdBetween).toHaveBeenCalledWith(
+    expect(bookingRepo.findManyByBarbershopIdBetween).toHaveBeenCalledWith(
       'shop-1',
       expect.any(Date),
       expect.any(Date),
@@ -79,7 +79,7 @@ describe('RegisterBookingUseCase', () => {
       new Date('2025-12-24T10:45:00Z'),
     );
 
-    bookingRepo.findByBarbershopIdBetween.mockResolvedValueOnce([existing]);
+    bookingRepo.findManyByBarbershopIdBetween.mockResolvedValueOnce([existing]);
 
     const useCase = new RegisterBookingUseCase(
       bookingRepo,
@@ -113,7 +113,7 @@ describe('RegisterBookingUseCase', () => {
     );
     existing.cancel();
 
-    bookingRepo.findByBarbershopIdBetween.mockResolvedValueOnce([existing]);
+    bookingRepo.findManyByBarbershopIdBetween.mockResolvedValueOnce([existing]);
 
     const useCase = new RegisterBookingUseCase(
       bookingRepo,
