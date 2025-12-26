@@ -12,7 +12,7 @@ export class UserMapper {
     entity.name = domain.name;
     entity.email = domain.email;
 
-    if (domain.paswword) entity.password = domain.paswword;
+    if (domain.password !== undefined) entity.password = domain.password ?? '';
 
     return entity;
   }

@@ -11,6 +11,11 @@ export default class User {
     if (!_name) throw new Error('Name can not be empty');
 
     if (_password == '') throw new Error('Password can not be empty');
+
+    this._id = _id;
+    this._name = _name;
+    this._email = _email;
+    this._password = _password;
   }
 
   static validateEmail(email: string) {
@@ -31,7 +36,7 @@ export default class User {
     return this._name;
   }
 
-  get paswword() {
-    return this.paswword;
+  get password() {
+    return this._password;
   }
 }
