@@ -7,4 +7,12 @@ export class CustomerMapper {
 
     return new Customer(entity.id, entity.userId, entity.phone);
   }
+
+  static toPersistence(domain: Customer): CustomerEntity {
+    const entity = new CustomerEntity();
+    entity.id = domain.id;
+    entity.userId = domain.userId;
+    entity.phone = domain.phone ?? null;
+    return entity;
+  }
 }
