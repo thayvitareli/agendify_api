@@ -2,12 +2,18 @@ import { BarbershopServiceEntity } from 'src/modules/barbershop-service/infrastr
 import { BarbershopEntity } from 'src/modules/barbershop/infrastructure/entity/barbershop.entity';
 import { CustomerEntity } from 'src/modules/customer/infrastructure/entity/customer.entity';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+
+const datetimeColumnType =
+  (process.env.DB_TYPE ?? process.env.TYPEORM_CONNECTION ?? '').toLowerCase() ===
+  'postgres'
+    ? 'timestamptz'
+    : 'datetime';
 
 @Entity('bookings')
 export class BookingEntity {
@@ -23,16 +29,16 @@ export class BookingEntity {
   @Column()
   serviceId: string;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: datetimeColumnType })
   startAt: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: datetimeColumnType })
   endAt: Date;
 
   @Column({ default: 'PENDING' })
   status: 'PENDING' | 'CONFIRMED' | 'CANCELED';
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: datetimeColumnType, nullable: true })
   canceledAt?: Date | null;
 
   @ManyToOne(() => BarbershopEntity, (shop) => shop.bookings)
