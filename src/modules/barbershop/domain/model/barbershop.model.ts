@@ -17,9 +17,8 @@ export class Barbershop {
     if (!userId) throw new Error('UserId can not be empyt');
     if (!name) throw new Error('Name can not be empyt');
     if (!id) throw new Error('Id can not be empyt');
-    if (phone != null && !Barbershop.isValidPhone(phone)) {
-      throw new Error('Invalid phone');
-    }
+
+    Barbershop.isValidPhone(phone);
 
     this._id = id;
     this._ownerUserId = userId;
