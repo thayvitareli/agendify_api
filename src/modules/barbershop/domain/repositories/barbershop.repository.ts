@@ -1,7 +1,7 @@
 import { Barbershop } from '../model/barbershop.model';
 
 export interface IBarbershopRepository {
-  save(user: Barbershop): Promise<void>;
+  save(barbershop: Barbershop): Promise<Barbershop | null>;
   findById(id: string): Promise<Barbershop | null>;
   findByEmail(email: string): Promise<Barbershop | null>;
 }
