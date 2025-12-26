@@ -15,7 +15,7 @@ export class CustomerEntity {
   @Column()
   userId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   phone: string | null;
 
   @OneToOne(() => UserEntity, (user) => user.customer)
