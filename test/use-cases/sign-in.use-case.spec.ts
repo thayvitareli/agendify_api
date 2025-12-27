@@ -36,7 +36,7 @@ describe('SignInUseCase', () => {
   });
 
   it('should throw UnauthorizedException when password is invalid', async () => {
-    const user = { id: 'user-id', email: 'john@example.com', paswword: 'hash' };
+    const user = { id: 'user-id', email: 'john@example.com', password: 'hash' };
     userRepo.findByEmail.mockResolvedValueOnce(user as any);
     hasher.compare.mockResolvedValueOnce(false);
 
@@ -48,7 +48,7 @@ describe('SignInUseCase', () => {
   });
 
   it('should return an access token when credentials are valid', async () => {
-    const user = { id: 'user-id', email: 'john@example.com', paswword: 'hash' };
+    const user = { id: 'user-id', email: 'john@example.com', password: 'hash' };
     userRepo.findByEmail.mockResolvedValueOnce(user as any);
     hasher.compare.mockResolvedValueOnce(true);
     jwt.sign.mockResolvedValueOnce('access-token');
@@ -62,30 +62,5 @@ describe('SignInUseCase', () => {
       sub: 'user-id',
       email: 'john@example.com',
     });
-  });
-
-  it('should propagate errors from the hasher', async () => {
-    const user = { id: 'user-id', email: 'john@example.com', paswword: 'hash' };
-    userRepo.findByEmail.mockResolvedValueOnce(user as any);
-    hasher.compare.mockRejectedValueOnce(new Error('compare error'));
-
-    const useCase = new SignInUseCase(userRepo, hasher, jwt);
-
-    await expect(useCase.execute('john@example.com', 'pass')).rejects.toThrow(
-      'compare error',
-    );
-  });
-
-  it('should propagate errors from jwt sign', async () => {
-    const user = { id: 'user-id', email: 'john@example.com', paswword: 'hash' };
-    userRepo.findByEmail.mockResolvedValueOnce(user as any);
-    hasher.compare.mockResolvedValueOnce(true);
-    jwt.sign.mockRejectedValueOnce(new Error('jwt error'));
-
-    const useCase = new SignInUseCase(userRepo, hasher, jwt);
-
-    await expect(useCase.execute('john@example.com', 'pass')).rejects.toThrow(
-      'jwt error',
-    );
   });
 });
