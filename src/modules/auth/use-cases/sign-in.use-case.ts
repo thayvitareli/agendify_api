@@ -15,13 +15,13 @@ export class SignInUseCase {
     password: string,
   ): Promise<{ accessToken: string }> {
     const user = await this.userRepo.findByEmail(email);
-    if (!user) {
+    if (!user || !user.password) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await this.hashService.compare(
       password,
-      user.paswword,
+      user.password,
     );
 
     if (!isPasswordValid) {
