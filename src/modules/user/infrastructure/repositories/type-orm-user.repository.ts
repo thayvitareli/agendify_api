@@ -3,13 +3,15 @@ import { UserEntity } from '../entity/user.entity';
 import { UserMapper } from '../../presentation/mappers/user.mapper';
 import { IUserRepository } from 'src/modules/user/domain/repositories/user.repository';
 import User from '../../domain/model/user.model';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+@Injectable()
 export class TypeORMUserRepository implements IUserRepository {
-  private readonly repository: Repository<UserEntity>;
-
-  constructor(repository: Repository<UserEntity>) {
-    this.repository = repository;
-  }
+  constructor(
+    @InjectRepository(UserEntity)
+    private repository: Repository<UserEntity>,
+  ) {}
 
   async save(user: User): Promise<User> {
     const userEntity = UserMapper.toPersistence(user);
