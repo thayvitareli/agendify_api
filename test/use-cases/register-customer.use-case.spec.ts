@@ -23,6 +23,7 @@ describe('RegisterCustomerUseCase', () => {
 
   const hasher: jest.Mocked<IPasswordHasher> = {
     hash: jest.fn(),
+    compare: jest.fn(),
   };
 
   const mockedUuid = uuid as jest.MockedFunction<typeof uuid>;
@@ -30,9 +31,9 @@ describe('RegisterCustomerUseCase', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     hasher.hash.mockResolvedValue('hashed-password');
-    userRepo.save.mockResolvedValue();
+    userRepo.save.mockResolvedValue({} as User);
     userRepo.findByEmail.mockResolvedValue(null);
-    customerRepo.save.mockResolvedValue();
+    customerRepo.save.mockResolvedValue(null);
     mockedUuid.mockReset();
     mockedUuid
       //@ts-ignore
