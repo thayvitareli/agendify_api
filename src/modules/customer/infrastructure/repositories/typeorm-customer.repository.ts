@@ -3,13 +3,15 @@ import { ICustomerRepository } from '../../domain/repositories/customer.reposito
 import { Customer } from '../../domain/model/customer.model';
 import { CustomerEntity } from '../entity/customer.entity';
 import { CustomerMapper } from '../../presentation/mappers/customer.mapper';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+@Injectable()
 export class TypeORMCustomerRepository implements ICustomerRepository {
-  private repository: Repository<CustomerEntity>;
-
-  constructor(repository: Repository<CustomerEntity>) {
-    this.repository = repository;
-  }
+  constructor(
+    @InjectRepository(CustomerEntity)
+    private repository: Repository<CustomerEntity>,
+  ) {}
 
   async save(customer: Customer): Promise<Customer | null> {
     const customerEntity = CustomerMapper.toPersistence(customer);
