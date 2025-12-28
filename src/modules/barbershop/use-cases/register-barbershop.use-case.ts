@@ -1,25 +1,23 @@
 import { v4 as uuid } from 'uuid';
-import { IUserRepository } from 'src/modules/user/domain/repositories/user.repository';
-import { IPasswordHasher } from 'src/modules/auth/domain/ports/password-hasher.port';
+import type { IUserRepository } from 'src/modules/user/domain/repositories/user.repository';
+import type { IPasswordHasher } from 'src/modules/auth/domain/ports/password-hasher.port';
 import User from '../../user/domain/model/user.model';
-import { IBarbershopRepository } from '../domain/repositories/barbershop.repository';
+import type { IBarbershopRepository } from '../domain/repositories/barbershop.repository';
 import { Barbershop } from '../domain/model/barbershop.model';
-import { Address } from '../domain/value_objects/address.vo';
+import CreateBarbershopDto from '../presentation/dto/create-barbershop.dto';
+import { Inject } from '@nestjs/common';
 
 export class RegisterBarbershopUseCase {
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepo: IUserRepository,
+    @Inject('IBarbershopRepository')
     private readonly barbershopRepo: IBarbershopRepository,
+    @Inject('IPasswordHasher')
     private readonly hasher: IPasswordHasher,
   ) {}
 
-  async execute(input: {
-    name: string;
-    email: string;
-    password: string;
-    phone: string;
-    address: Address;
-  }) {
+  async execute(input: CreateBarbershopDto) {
     User.validateEmail(input.email);
     Barbershop.validatePhone(input.phone);
 
