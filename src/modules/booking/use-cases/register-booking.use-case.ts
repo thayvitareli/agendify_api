@@ -2,6 +2,8 @@ import { IBookingRepository } from '../domain/repositories/booking.repository';
 import { Booking } from '../domain/model/booking.model';
 import { ICustomerRepository } from 'src/modules/customer/domain/repositories/customer.repository';
 import { IBarbershopServiceRepository } from 'src/modules/barbershop-service/domain/repositories/barbershop-service.repository';
+import { v4 as uuid } from 'uuid';
+import { RegisterBookingDto } from '../presentation/dtos/register-booking.dto';
 
 export class RegisterBookingUseCase {
   constructor(
@@ -10,13 +12,7 @@ export class RegisterBookingUseCase {
     private readonly barbershopServiceRepo: IBarbershopServiceRepository,
   ) {}
 
-  async execute(input: {
-    id: string;
-    barbershopId: string;
-    customerId: string;
-    serviceId: string;
-    startAt: Date;
-  }) {
+  async execute(input: RegisterBookingDto) {
     const customer = await this.customerRepo.findById(input.customerId);
 
     if (!customer) {
@@ -57,7 +53,7 @@ export class RegisterBookingUseCase {
     }
 
     const booking = new Booking(
-      input.id,
+      uuid(),
       input.barbershopId,
       input.customerId,
       input.serviceId,

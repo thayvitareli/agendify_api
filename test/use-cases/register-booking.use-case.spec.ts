@@ -64,7 +64,6 @@ describe('RegisterBookingUseCase', () => {
     expect(bookingRepo.save).toHaveBeenCalledTimes(1);
     const saved = bookingRepo.save.mock.calls[0][0];
     expect(saved).toBeInstanceOf(Booking);
-    expect(saved.id).toBe('b-id');
     expect(result).toBe(saved);
   });
 
