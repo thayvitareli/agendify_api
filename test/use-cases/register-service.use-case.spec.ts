@@ -4,6 +4,7 @@ import { Address } from 'src/modules/barbershop/domain/value_objects/address.vo'
 import { IBarbershopServiceRepository } from 'src/modules/barbershop-service/domain/repositories/barbershop-service.repository';
 import { RegisterServiceUseCase } from 'src/modules/barbershop-service/use-cases/register-service.use-case';
 import { BarbershopService } from 'src/modules/barbershop-service/domain/model/barbershop-service.model';
+import { RegisterServiceDto } from 'src/modules/barbershop-service/presentation/dto/register-service.dto';
 
 describe('RegisterServiceUseCase', () => {
   const barbershopRepo: jest.Mocked<IBarbershopRepository> = {
@@ -29,7 +30,7 @@ describe('RegisterServiceUseCase', () => {
         new Address('Main', '1', 'City', 'ST', '00000'),
       ),
     );
-    barbershopServiceRepo.save.mockResolvedValue();
+    barbershopServiceRepo.save.mockResolvedValue({} as BarbershopService);
   });
 
   it('should create and save a BarbershopService', async () => {
@@ -38,11 +39,10 @@ describe('RegisterServiceUseCase', () => {
       barbershopServiceRepo,
     );
 
-    const input = {
-      id: 'service-id',
+    const input: RegisterServiceDto = {
       barbershopId: 'b-id',
       name: 'Haircut',
-      durationMinutes: 30,
+      durationInMinutes: 30,
       price: 25,
     };
 
@@ -53,14 +53,12 @@ describe('RegisterServiceUseCase', () => {
     expect(barbershopServiceRepo.save).toHaveBeenCalledTimes(1);
     const saved = barbershopServiceRepo.save.mock.calls[0][0];
     expect(saved).toBeInstanceOf(BarbershopService);
-    expect(saved.id).toBe('service-id');
     expect(saved.barbershopId).toBe('b-id');
     expect(saved.name).toBe('Haircut');
     expect(saved.durationMinutes).toBe(30);
     expect(saved.price).toBe(25);
 
     expect(result).toBeInstanceOf(BarbershopService);
-    expect(result.id).toBe('service-id');
   });
 
   it('should throw when barbershop not found', async () => {
@@ -75,7 +73,7 @@ describe('RegisterServiceUseCase', () => {
       id: 'service-id',
       barbershopId: 'missing',
       name: 'Haircut',
-      durationMinutes: 30,
+      durationInMinutes: 30,
       price: 25,
     };
 
@@ -96,7 +94,7 @@ describe('RegisterServiceUseCase', () => {
       id: 'service-id',
       barbershopId: 'b-id',
       name: 'Haircut',
-      durationMinutes: 0,
+      durationInMinutes: 0,
       price: 25,
     };
 
@@ -117,7 +115,7 @@ describe('RegisterServiceUseCase', () => {
       id: 'service-id',
       barbershopId: 'b-id',
       name: 'Haircut',
-      durationMinutes: 30,
+      durationInMinutes: 30,
       price: -5,
     };
 
