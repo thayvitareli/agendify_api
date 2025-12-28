@@ -80,6 +80,9 @@ describe('BarbershopServiceController (e2e)', () => {
     if (app) {
       await app.close();
     }
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+    }
   });
 
   describe('POST /barbershop-service (Register)', () => {
