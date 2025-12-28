@@ -9,11 +9,13 @@ import { BookingEntity } from './modules/booking/infrastructure/entity/booking.e
 import { BarbershopEntity } from './modules/barbershop/infrastructure/entity/barbershop.entity';
 import { BarbershopServiceEntity } from './modules/barbershop-service/infrastructure/entity/barbershop-service.entity';
 import { BarbershopModule } from './modules/barbershop/barbershop.module';
+import { BarbershopServiceModule } from './modules/barbershop-service/barbershop-service.module';
 
 @Module({
   imports: [
     CustomerModule,
     BarbershopModule,
+    BarbershopServiceModule,
     BookingModule,
     AuthModule,
     TypeOrmModule.forRoot({
