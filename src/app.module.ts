@@ -8,10 +8,12 @@ import { UserEntity } from './modules/user/infrastructure/entity/user.entity';
 import { BookingEntity } from './modules/booking/infrastructure/entity/booking.entity';
 import { BarbershopEntity } from './modules/barbershop/infrastructure/entity/barbershop.entity';
 import { BarbershopServiceEntity } from './modules/barbershop-service/infrastructure/entity/barbershop-service.entity';
+import { BarbershopModule } from './modules/barbershop/barbershop.module';
 
 @Module({
   imports: [
     CustomerModule,
+    BarbershopModule,
     BookingModule,
     AuthModule,
     TypeOrmModule.forRoot({
