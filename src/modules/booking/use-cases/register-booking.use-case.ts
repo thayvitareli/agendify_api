@@ -1,14 +1,18 @@
-import { IBookingRepository } from '../domain/repositories/booking.repository';
+import type { IBookingRepository } from '../domain/repositories/booking.repository';
 import { Booking } from '../domain/model/booking.model';
-import { ICustomerRepository } from 'src/modules/customer/domain/repositories/customer.repository';
-import { IBarbershopServiceRepository } from 'src/modules/barbershop-service/domain/repositories/barbershop-service.repository';
+import type { ICustomerRepository } from 'src/modules/customer/domain/repositories/customer.repository';
+import type { IBarbershopServiceRepository } from 'src/modules/barbershop-service/domain/repositories/barbershop-service.repository';
 import { v4 as uuid } from 'uuid';
 import { RegisterBookingDto } from '../presentation/dtos/register-booking.dto';
+import { Inject } from '@nestjs/common';
 
 export class RegisterBookingUseCase {
   constructor(
+    @Inject('IBookingRepository')
     private readonly bookingRepo: IBookingRepository,
+    @Inject('ICustomerRepository')
     private readonly customerRepo: ICustomerRepository,
+    @Inject('IBarbershopServiceRepository')
     private readonly barbershopServiceRepo: IBarbershopServiceRepository,
   ) {}
 
@@ -26,7 +30,9 @@ export class RegisterBookingUseCase {
     }
 
     const endAt = new Date(
-      input.startAt.getTime() + service.durationMinutes * 60000,
+      typeof input.startAt == 'string'
+        ? new Date(input.startAt).getTime() + service.durationMinutes * 60000
+        : input.startAt.getTime() + service.durationMinutes * 60000,
     );
 
     const dayStart = new Date(input.startAt);
