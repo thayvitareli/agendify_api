@@ -3,13 +3,13 @@ import { IBookingRepository } from '../../domain/repositories/booking.repository
 import { Booking } from '../../domain/model/booking.model';
 import { BookingEntity } from '../entity/booking.entity';
 import { BookingMapper } from '../../presentation/mappers/booking.mapper';
+import { InjectRepository } from '@nestjs/typeorm';
 
 export class TypeORMBookingRepository implements IBookingRepository {
-  private repository: Repository<BookingEntity>;
-
-  constructor(repository: Repository<BookingEntity>) {
-    this.repository = repository;
-  }
+  constructor(
+    @InjectRepository(BookingEntity)
+    private readonly repository: Repository<BookingEntity>,
+  ) {}
 
   async save(booking: Booking): Promise<Booking | null> {
     const entity = BookingMapper.toPersistence(booking);
