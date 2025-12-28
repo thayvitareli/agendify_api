@@ -3,7 +3,7 @@ import { IPasswordHasher } from '../domain/ports/password-hasher.port';
 
 export class BcryptPasswordHasherAdapter implements IPasswordHasher {
   hash(pass: string): Promise<string> {
-    return bcrypt.hash(pass, process.env.SALT);
+    return bcrypt.hash(pass, process.env.SALT || 10);
   }
 
   async compare(pass: string, hashedPass: string): Promise<boolean> {
