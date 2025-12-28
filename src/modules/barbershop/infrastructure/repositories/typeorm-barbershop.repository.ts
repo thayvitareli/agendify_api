@@ -3,13 +3,13 @@ import { IBarbershopRepository } from '../../domain/repositories/barbershop.repo
 import { BarbershopEntity } from '../entity/barbershop.entity';
 import { Barbershop } from '../../domain/model/barbershop.model';
 import { BarbershopMapper } from '../../presentation/mappers/barbershop.mapper';
+import { InjectRepository } from '@nestjs/typeorm';
 
 export class TypeORMBarbershopRepository implements IBarbershopRepository {
-  private repository: Repository<BarbershopEntity>;
-
-  constructor(repository: Repository<BarbershopEntity>) {
-    this.repository = repository;
-  }
+  constructor(
+    @InjectRepository(BarbershopEntity)
+    private readonly repository: Repository<BarbershopEntity>,
+  ) {}
 
   async save(barbershop: Barbershop): Promise<Barbershop | null> {
     const barbershopEntity = BarbershopMapper.toPersistence(barbershop);
