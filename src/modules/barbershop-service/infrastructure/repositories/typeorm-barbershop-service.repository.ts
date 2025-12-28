@@ -1,15 +1,15 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { IBarbershopServiceRepository } from '../../domain/repositories/barbershop-service.repository';
 import { BarbershopServiceEntity } from '../entity/barbershop-service.entity';
 import { BarbershopService } from '../../domain/model/barbershop-service.model';
 import { BarbershopServiceMapper } from '../../presentation/mappers/barbershop-service.mapper';
+import { InjectRepository } from '@nestjs/typeorm';
 
 export class TypeORMBarbershopServiceRepository implements IBarbershopServiceRepository {
-  private repository: Repository<BarbershopServiceEntity>;
-
-  constructor(repository: Repository<BarbershopServiceEntity>) {
-    this.repository = repository;
-  }
+  constructor(
+    @InjectRepository(BarbershopServiceEntity)
+    private readonly repository: Repository<BarbershopServiceEntity>,
+  ) {}
 
   async save(
     barbershopService: BarbershopService,
