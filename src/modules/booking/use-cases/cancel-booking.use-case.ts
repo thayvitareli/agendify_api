@@ -1,7 +1,11 @@
-import { IBookingRepository } from '../domain/repositories/booking.repository';
+import { Inject } from '@nestjs/common';
+import type { IBookingRepository } from '../domain/repositories/booking.repository';
 
 export class CancelBookingUseCase {
-  constructor(private readonly bookingRepo: IBookingRepository) {}
+  constructor(
+    @Inject('IBookingRepository')
+    private readonly bookingRepo: IBookingRepository,
+  ) {}
 
   async execute(input: { id: string }) {
     const booking = await this.bookingRepo.findById(input.id);
