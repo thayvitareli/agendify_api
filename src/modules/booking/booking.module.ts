@@ -8,6 +8,7 @@ import { CustomerEntity } from '../customer/infrastructure/entity/customer.entit
 import { BookingEntity } from './infrastructure/entity/booking.entity';
 import { BarbershopServiceEntity } from '../barbershop-service/infrastructure/entity/barbershop-service.entity';
 import { TypeORMBarbershopServiceRepository } from '../barbershop-service/infrastructure/repositories/typeorm-barbershop-service.repository';
+import { CancelBookingUseCase } from './use-cases/cancel-booking.use-case';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TypeORMBarbershopServiceRepository } from '../barbershop-service/infras
   controllers: [BookingController],
   providers: [
     RegisterBookingUseCase,
+    CancelBookingUseCase,
     { provide: 'IBookingRepository', useClass: TypeORMBookingRepository },
     { provide: 'ICustomerRepository', useClass: TypeORMCustomerRepository },
     {
