@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import type { IBookingRepository } from '../domain/repositories/booking.repository';
 
 export class CancelBookingUseCase {
@@ -11,7 +11,7 @@ export class CancelBookingUseCase {
     const booking = await this.bookingRepo.findById(input.id);
 
     if (!booking) {
-      throw new Error('Booking not found');
+      throw new NotFoundException('Booking not found');
     }
 
     booking.cancel();
