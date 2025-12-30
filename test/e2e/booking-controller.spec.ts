@@ -19,6 +19,7 @@ describe('BookingController (e2e)', () => {
   let barbershopRepository: Repository<BarbershopEntity>;
   let customerRepository: Repository<CustomerEntity>;
   let barbershopServiceRepository: Repository<BarbershopServiceEntity>;
+  let bookingRepository: Repository<BookingEntity>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -53,6 +54,7 @@ describe('BookingController (e2e)', () => {
     barbershopServiceRepository = dataSource.getRepository(
       BarbershopServiceEntity,
     );
+    bookingRepository = dataSource.getRepository(BookingEntity);
   });
 
   beforeEach(async () => {
@@ -102,6 +104,16 @@ describe('BookingController (e2e)', () => {
       userId: 'user-2',
       phone: '87654321',
     });
+
+    await bookingRepository.save({
+      id: 'booking-id',
+      barbershopId: 'shop-1',
+      serviceId: 'service-1',
+      customerId: 'customer-1',
+      startAt: new Date('2025-12-20T10:00:00Z'),
+      endAt: new Date('2025-12-20T10:30:00Z'),
+      status: 'CONFIRMED',
+    });
   });
 
   afterAll(async () => {
@@ -124,6 +136,34 @@ describe('BookingController (e2e)', () => {
           startAt: '2025-12-24T10:00:00Z',
         })
         .expect(201);
+    });
+  });
+
+  describe('POST /Cancel booking', () => {
+    it('should cancel a booking', () => {
+      return request(app.getHttpServer())
+        .post('/booking/booking-id/cancel')
+        .expect(201);
+    });
+
+    it('should throw an error when canceling a non-existent booking', async () => {
+      const resp = await request(app.getHttpServer()).post(
+        '/booking/no-existing-booking-id/cancel',
+      );
+
+      expect(resp.status).toBe(404);
+      expect(resp.body.message).toBe('Booking not found');
+    });
+
+    it('should throw an error when trying to cancel a booking already canceled', async () => {
+      await bookingRepository.update('booking-id', { status: 'CANCELED' });
+
+      const resp = await request(app.getHttpServer())
+        .post('/booking/booking-id/cancel')
+        .expect(409);
+
+      expect(resp.status).toBe(409);
+      expect(resp.body.message).toBe('Booking already canceled.');
     });
   });
 });
