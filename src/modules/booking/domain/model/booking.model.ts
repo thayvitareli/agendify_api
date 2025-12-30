@@ -1,3 +1,5 @@
+import { ConflictException } from '@nestjs/common';
+
 export class Booking {
   constructor(
     private readonly _id: string,
@@ -14,7 +16,7 @@ export class Booking {
 
   cancel() {
     if (this._status === 'CANCELED') {
-      throw new Error('Booking already canceled.');
+      throw new ConflictException('Booking already canceled.');
     }
     this._status = 'CANCELED';
     this._canceledAt = new Date();
