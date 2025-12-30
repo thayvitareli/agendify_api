@@ -4,7 +4,7 @@ import type { IUserRepository } from 'src/modules/user/domain/repositories/user.
 import type { IPasswordHasher } from 'src/modules/auth/domain/ports/password-hasher.port';
 import type { ICustomerRepository } from '../domain/repositories/customer.repository';
 import User from '../../user/domain/model/user.model';
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class RegisterCustomerUseCase {
@@ -29,7 +29,7 @@ export class RegisterCustomerUseCase {
     const existing = await this.userRepo.findByEmail(input.email);
 
     if (existing) {
-      throw new Error('Email already in use');
+      throw new ConflictException('Email already in use');
     }
 
     const hash = await this.hasher.hash(input.password);
