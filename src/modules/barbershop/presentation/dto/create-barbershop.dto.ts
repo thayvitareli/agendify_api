@@ -3,7 +3,11 @@ import { Address } from '../../domain/value_objects/address.vo';
 
 export default class CreateBarbershopDto {
   @IsString()
-  name: string;
+  userName: string;
+
+  @IsString()
+  barbershopName: string;
+
   @IsEmail()
   email: string;
   @IsString()
