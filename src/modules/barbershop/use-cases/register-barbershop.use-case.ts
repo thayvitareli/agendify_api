@@ -29,7 +29,7 @@ export class RegisterBarbershopUseCase {
 
     const hash = await this.hasher.hash(input.password);
 
-    const user = new User(uuid(), input.name, input.email, hash);
+    const user = new User(uuid(), input.userName, input.email, hash);
 
     await this.userRepo.save(user);
 
@@ -37,7 +37,7 @@ export class RegisterBarbershopUseCase {
       uuid(),
       user.id,
       input.phone,
-      input.name,
+      input.barbershopName,
       input.address,
     );
 
