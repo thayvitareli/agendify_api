@@ -6,6 +6,7 @@ import { IBarbershopRepository } from 'src/modules/barbershop/domain/repositorie
 import { RegisterBarbershopUseCase } from 'src/modules/barbershop/use-cases/register-barbershop.use-case';
 import { Barbershop } from 'src/modules/barbershop/domain/model/barbershop.model';
 import { Address } from 'src/modules/barbershop/domain/value_objects/address.vo';
+import CreateBarbershopDto from 'src/modules/barbershop/presentation/dto/create-barbershop.dto';
 
 jest.mock('uuid', () => ({ v4: jest.fn() }));
 
@@ -24,6 +25,7 @@ describe('RegisterBarbershopUseCase', () => {
 
   const hasher: jest.Mocked<IPasswordHasher> = {
     hash: jest.fn(),
+    compare: jest.fn(),
   };
 
   const mockedUuid = uuid as jest.MockedFunction<typeof uuid>;
@@ -31,9 +33,9 @@ describe('RegisterBarbershopUseCase', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     hasher.hash.mockResolvedValue('hashed-password');
-    userRepo.save.mockResolvedValue();
+    userRepo.save.mockResolvedValue({} as User);
     userRepo.findByEmail.mockResolvedValue(null);
-    barbershopRepo.save.mockResolvedValue();
+    barbershopRepo.save.mockResolvedValue({} as Barbershop);
     mockedUuid.mockReset();
     mockedUuid
       //@ts-ignore
@@ -49,8 +51,9 @@ describe('RegisterBarbershopUseCase', () => {
       hasher,
     );
 
-    const input = {
-      name: 'Barber Shop',
+    const input: CreateBarbershopDto = {
+      userName: 'Jhon Doe',
+      barbershopName: 'Barber Shop',
       email: 'barber@example.com',
       password: 'plain-pass',
       phone: '999999999',
@@ -65,7 +68,7 @@ describe('RegisterBarbershopUseCase', () => {
     const savedUser = userRepo.save.mock.calls[0][0];
     expect(savedUser).toBeInstanceOf(User);
     expect(savedUser.id).toBe('user-id');
-    expect(savedUser.name).toBe('Barber Shop');
+    expect(savedUser.name).toBe('Jhon Doe');
     expect(savedUser.email).toBe('barber@example.com');
 
     expect(barbershopRepo.save).toHaveBeenCalledTimes(1);
@@ -95,8 +98,9 @@ describe('RegisterBarbershopUseCase', () => {
       hasher,
     );
 
-    const input = {
-      name: 'Barber Shop',
+    const input: CreateBarbershopDto = {
+      userName: 'Jhon Doe',
+      barbershopName: 'Barber Shop',
       email: 'barber@example.com',
       password: 'plain-pass',
       phone: '999999999',
@@ -120,8 +124,9 @@ describe('RegisterBarbershopUseCase', () => {
       hasher,
     );
 
-    const input = {
-      name: 'Barber Shop',
+    const input: CreateBarbershopDto = {
+      userName: 'Jhon Doe',
+      barbershopName: 'Barber Shop',
       email: 'barber2@example.com',
       password: 'plain-pass',
       phone: '999999999',
@@ -141,8 +146,9 @@ describe('RegisterBarbershopUseCase', () => {
       hasher,
     );
 
-    const input = {
-      name: 'Barber Shop',
+    const input: CreateBarbershopDto = {
+      userName: 'Jhon Doe',
+      barbershopName: 'Barber Shop',
       email: 'barber3@example.com',
       password: 'plain-pass',
       phone: 'abc',

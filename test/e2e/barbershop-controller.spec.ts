@@ -48,7 +48,8 @@ describe('BarbershopController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/barbershop')
         .send({
-          name: 'John Doe',
+          userName: 'John Doe',
+          barbershopName: 'Barber Shop',
           email: 'john@example.com',
           phone: '1234567890',
           password: 'securePassword',
@@ -70,11 +71,12 @@ describe('BarbershopController (e2e)', () => {
         });
     });
 
-    it('should throw an error if name is empty', () => {
+    it('should throw an error if user name is empty', () => {
       return request(app.getHttpServer())
         .post('/barbershop')
         .send({
-          name: '',
+          userName: '',
+          barbershopName: 'Barber Shop',
           email: 'john@example.com',
           phone: '1234567890',
           password: 'securePassword',
