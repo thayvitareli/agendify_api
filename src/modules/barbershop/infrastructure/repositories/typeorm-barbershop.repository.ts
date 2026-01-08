@@ -26,6 +26,13 @@ export class TypeORMBarbershopRepository implements IBarbershopRepository {
     return entity ? BarbershopMapper.toDomain(entity) : null;
   }
 
+  async findByOwnerUserId(ownerUserId: string): Promise<Barbershop | null> {
+    const entity = await this.repository.findOne({
+      where: { ownerUserId },
+    });
+    return entity ? BarbershopMapper.toDomain(entity) : null;
+  }
+
   async findByEmail(email: string): Promise<Barbershop | null> {
     const entity = await this.repository
       .createQueryBuilder('barbershop')
