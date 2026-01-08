@@ -13,6 +13,8 @@ import { AuthModule } from '../auth/auth.module';
 import { BarbershopEntity } from '../barbershop/infrastructure/entity/barbershop.entity';
 import { TypeORMBarbershopRepository } from '../barbershop/infrastructure/repositories/typeorm-barbershop.repository';
 import { JwtAuthGuard } from 'src/modules/auth/presentation/guards/jwt-auth.guard';
+import { ListCustomerBookingsUseCase } from './use-cases/list-customer-bookings.use-case';
+import { ListBarbershopBookingsUseCase } from './use-cases/list-barbershop-bookings.use-case';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { JwtAuthGuard } from 'src/modules/auth/presentation/guards/jwt-auth.guar
   providers: [
     RegisterBookingUseCase,
     CancelBookingUseCase,
+    ListCustomerBookingsUseCase,
+    ListBarbershopBookingsUseCase,
     JwtAuthGuard,
     { provide: 'IBookingRepository', useClass: TypeORMBookingRepository },
     { provide: 'ICustomerRepository', useClass: TypeORMCustomerRepository },

@@ -181,4 +181,43 @@ describe('BookingController (e2e)', () => {
       expect(resp.body.message).toBe('Booking already canceled.');
     });
   });
+
+  describe('GET /booking/customer (List)', () => {
+    it('should list customer bookings', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/booking/customer')
+        .set('Authorization', `Bearer ${customerToken}`)
+        .expect(200);
+      expect(resp.body.bookings).toHaveLength(1);
+    });
+
+    it('should return 404 when user is not a customer', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/booking/customer')
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .expect(404);
+
+      expect(resp.body.message).toBe('Customer not found');
+    });
+  });
+
+  describe('GET /booking/barbershop (List)', () => {
+    it('should list barbershop bookings', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/booking/barbershop')
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .expect(200);
+
+      expect(resp.body.bookings).toHaveLength(1);
+    });
+
+    it('should return 404 when user is not a barbershop owner', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/booking/barbershop')
+        .set('Authorization', `Bearer ${customerToken}`)
+        .expect(404);
+
+      expect(resp.body.message).toBe('Barbershop not found');
+    });
+  });
 });
