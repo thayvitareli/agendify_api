@@ -46,3 +46,15 @@ The project is modular, and each module encapsulates its own domain and use case
 **Testing (TDD)**
 
 The project is designed to be developed using Test-Driven Development (TDD). <br><br>
+
+**Authentication (JWT)**
+
+- `POST /auth/sign-in` returns `{ "accessToken": "..." }`
+- Protected routes require `Authorization: Bearer <token>`
+- Env: set `JWT_SECRET` (defaults to `dev-secret` if not provided)
+
+**Authorization rules**
+
+- `POST /booking`: only the logged-in user that owns the `customerId` can create a booking
+- `POST /booking/:id/cancel`: only the booking's customer user or the barbershop owner can cancel
+- `POST /barbershop-service`: only the barbershop owner can create services for their barbershop

@@ -1,12 +1,16 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { IPasswordHasher } from '../domain/ports/password-hasher.port';
-import { IUserRepository } from 'src/modules/user/domain/repositories/user.repository';
-import { IJwtAdapter } from '../domain/ports/jwt.port';
+import type { IPasswordHasher } from '../domain/ports/password-hasher.port';
+import type { IUserRepository } from 'src/modules/user/domain/repositories/user.repository';
+import type { IJwtAdapter } from '../domain/ports/jwt.port';
+import { Inject } from '@nestjs/common';
 
 export class SignInUseCase {
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepo: IUserRepository,
+    @Inject('IPasswordHasher')
     private readonly hashService: IPasswordHasher,
+    @Inject('IJwtAdapter')
     private readonly jwtService: IJwtAdapter,
   ) {}
 
