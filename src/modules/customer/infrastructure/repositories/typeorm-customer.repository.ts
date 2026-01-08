@@ -28,6 +28,13 @@ export class TypeORMCustomerRepository implements ICustomerRepository {
     return entity ? CustomerMapper.toDomain(entity) : null;
   }
 
+  async findByUserId(userId: string): Promise<Customer | null> {
+    const entity = await this.repository.findOne({
+      where: { userId },
+    });
+    return entity ? CustomerMapper.toDomain(entity) : null;
+  }
+
   async findByEmail(email: string): Promise<Customer | null> {
     const entity = await this.repository
       .createQueryBuilder('customer')
