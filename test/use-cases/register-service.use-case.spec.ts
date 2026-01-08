@@ -10,6 +10,7 @@ describe('RegisterServiceUseCase', () => {
   const barbershopRepo: jest.Mocked<IBarbershopRepository> = {
     save: jest.fn(),
     findById: jest.fn(),
+    findByOwnerUserId: jest.fn(),
     findByEmail: jest.fn(),
   };
 

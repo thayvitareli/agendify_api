@@ -18,6 +18,7 @@ describe('RegisterBookingUseCase', () => {
   const customerRepo: jest.Mocked<ICustomerRepository> = {
     save: jest.fn(),
     findById: jest.fn(),
+    findByUserId: jest.fn(),
     findByEmail: jest.fn(),
   };
 

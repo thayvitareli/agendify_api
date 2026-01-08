@@ -19,12 +19,14 @@ describe('CancelBookingUseCase', () => {
   const customerRepo: jest.Mocked<ICustomerRepository> = {
     save: jest.fn(),
     findById: jest.fn(),
+    findByUserId: jest.fn(),
     findByEmail: jest.fn(),
   };
 
   const barbershopRepo: jest.Mocked<IBarbershopRepository> = {
     save: jest.fn(),
     findById: jest.fn(),
+    findByOwnerUserId: jest.fn(),
     findByEmail: jest.fn(),
   };
 
@@ -143,4 +145,3 @@ describe('CancelBookingUseCase', () => {
     expect(bookingRepo.save).not.toHaveBeenCalled();
   });
 });
-
