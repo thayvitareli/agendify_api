@@ -57,7 +57,9 @@ describe('CustomerController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toHaveProperty('customer');
-          expect(res.body.customer).toMatchObject({ _id: expect.any(String) });
+          expect(res.body.customer).toMatchObject({ id: expect.any(String) });
+          expect(res.body).toHaveProperty('user');
+          expect(res.body.user).toMatchObject({ id: expect.any(String) });
         });
     });
 

@@ -106,10 +106,10 @@ describe('BarbershopServiceController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toMatchObject({
-            _id: expect.any(String),
-            _barbershopId: 'shop-1',
-            _name: 'Corte',
-            _durationMinutes: 30,
+            id: expect.any(String),
+            barbershopId: 'shop-1',
+            name: 'Corte',
+            durationInMinutes: 30,
           });
         });
     });

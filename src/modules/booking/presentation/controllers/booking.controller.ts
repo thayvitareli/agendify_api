@@ -7,6 +7,7 @@ import { CurrentUser } from 'src/modules/auth/presentation/decorators/current-us
 import type { AuthUser } from 'src/modules/auth/presentation/types/auth-user';
 import { ListCustomerBookingsUseCase } from '../../use-cases/list-customer-bookings.use-case';
 import { ListBarbershopBookingsUseCase } from '../../use-cases/list-barbershop-bookings.use-case';
+import { BookingPresenter } from '../presenters/booking.presenter';
 
 @Controller('booking')
 @UseGuards(JwtAuthGuard)
@@ -19,25 +20,33 @@ export class BookingController {
   ) {}
 
   @Post()
-  registerBooking(
+  async registerBooking(
     @Body() body: RegisterBookingDto,
     @CurrentUser() user: AuthUser,
   ) {
-    return this.registerBookingUseCase.execute(body, user.userId);
+    const booking = await this.registerBookingUseCase.execute(body, user.userId);
+    return BookingPresenter.toHttp(booking);
   }
 
   @Post(':id/cancel')
-  cancelBooking(@Param('id') id: string, @CurrentUser() user: AuthUser) {
-    return this.cancelBookingUseCase.execute({ id }, user.userId);
+  async cancelBooking(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    const booking = await this.cancelBookingUseCase.execute({ id }, user.userId);
+    return BookingPresenter.toHttp(booking);
   }
 
   @Get('customer')
   async listCustomerBookings(@CurrentUser() user: AuthUser) {
-    return await this.listCustomerBookingsUseCase.execute(user.userId);
+    const { bookings } = await this.listCustomerBookingsUseCase.execute(
+      user.userId,
+    );
+    return { bookings: BookingPresenter.toHttpMany(bookings) };
   }
 
   @Get('barbershop')
   async listBarbershopBookings(@CurrentUser() user: AuthUser) {
-    return await this.listBarbershopBookingsUseCase.execute(user.userId);
+    const { bookings } = await this.listBarbershopBookingsUseCase.execute(
+      user.userId,
+    );
+    return { bookings: BookingPresenter.toHttpMany(bookings) };
   }
 }

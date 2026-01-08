@@ -65,9 +65,9 @@ describe('BarbershopController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toHaveProperty('barbershop');
-          expect(res.body.barbershop).toMatchObject({
-            _id: expect.any(String),
-          });
+          expect(res.body.barbershop).toMatchObject({ id: expect.any(String) });
+          expect(res.body).toHaveProperty('user');
+          expect(res.body.user).toMatchObject({ id: expect.any(String) });
         });
     });
 
