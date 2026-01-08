@@ -46,7 +46,7 @@ describe('RegisterServiceUseCase', () => {
       price: 25,
     };
 
-    const result = await useCase.execute(input);
+    const result = await useCase.execute(input, 'owner-id');
 
     expect(barbershopRepo.findById).toHaveBeenCalledWith('b-id');
 
@@ -77,7 +77,7 @@ describe('RegisterServiceUseCase', () => {
       price: 25,
     };
 
-    await expect(useCase.execute(input)).rejects.toThrow(
+    await expect(useCase.execute(input, 'owner-id')).rejects.toThrow(
       'Barbershop not found',
     );
 
@@ -98,7 +98,7 @@ describe('RegisterServiceUseCase', () => {
       price: 25,
     };
 
-    await expect(useCase.execute(input)).rejects.toThrow(
+    await expect(useCase.execute(input, 'owner-id')).rejects.toThrow(
       'Duration must be greater than 0.',
     );
 
@@ -119,8 +119,28 @@ describe('RegisterServiceUseCase', () => {
       price: -5,
     };
 
-    await expect(useCase.execute(input)).rejects.toThrow(
+    await expect(useCase.execute(input, 'owner-id')).rejects.toThrow(
       'Price cannot be negative.',
+    );
+
+    expect(barbershopServiceRepo.save).not.toHaveBeenCalled();
+  });
+
+  it('should throw when actor is not barbershop owner', async () => {
+    const useCase = new RegisterServiceUseCase(
+      barbershopRepo,
+      barbershopServiceRepo,
+    );
+
+    const input: RegisterServiceDto = {
+      barbershopId: 'b-id',
+      name: 'Haircut',
+      durationInMinutes: 30,
+      price: 25,
+    };
+
+    await expect(useCase.execute(input, 'other-user')).rejects.toThrow(
+      'Not allowed to create service for barbershop',
     );
 
     expect(barbershopServiceRepo.save).not.toHaveBeenCalled();

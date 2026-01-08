@@ -6,12 +6,18 @@ import { RegisterServiceUseCase } from './use-cases/register-service.use-case';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BarbershopServiceEntity } from './infrastructure/entity/barbershop-service.entity';
 import { BarbershopEntity } from '../barbershop/infrastructure/entity/barbershop.entity';
+import { AuthModule } from '../auth/auth.module';
+import { JwtAuthGuard } from 'src/modules/auth/presentation/guards/jwt-auth.guard';
 
 @Module({
   controllers: [BarbershopServiceController],
-  imports: [TypeOrmModule.forFeature([BarbershopEntity, BarbershopServiceEntity])],
+  imports: [
+    TypeOrmModule.forFeature([BarbershopEntity, BarbershopServiceEntity]),
+    AuthModule,
+  ],
   providers: [
     RegisterServiceUseCase,
+    JwtAuthGuard,
     {
       provide: 'IBarbershopServiceRepository',
       useClass: TypeORMBarbershopServiceRepository,

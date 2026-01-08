@@ -4,7 +4,7 @@ import type { ICustomerRepository } from 'src/modules/customer/domain/repositori
 import type { IBarbershopServiceRepository } from 'src/modules/barbershop-service/domain/repositories/barbershop-service.repository';
 import { v4 as uuid } from 'uuid';
 import { RegisterBookingDto } from '../presentation/dtos/register-booking.dto';
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 
 export class RegisterBookingUseCase {
   constructor(
@@ -16,11 +16,15 @@ export class RegisterBookingUseCase {
     private readonly barbershopServiceRepo: IBarbershopServiceRepository,
   ) {}
 
-  async execute(input: RegisterBookingDto) {
+  async execute(input: RegisterBookingDto, actorUserId: string) {
     const customer = await this.customerRepo.findById(input.customerId);
 
     if (!customer) {
       throw new Error('Customer not found');
+    }
+
+    if (customer.userId !== actorUserId) {
+      throw new ForbiddenException('Not allowed to create booking for customer');
     }
 
     const service = await this.barbershopServiceRepo.findById(input.serviceId);

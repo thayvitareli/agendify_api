@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { JwtService } from '@nestjs/jwt';
 import { CustomerEntity } from 'src/modules/customer/infrastructure/entity/customer.entity';
 import { UserEntity } from 'src/modules/user/infrastructure/entity/user.entity';
 import { BookingEntity } from 'src/modules/booking/infrastructure/entity/booking.entity';
@@ -17,8 +18,11 @@ describe('BarbershopServiceController (e2e)', () => {
   let dataSource: DataSource;
   let userRepository: Repository<UserEntity>;
   let barbershopRepository: Repository<BarbershopEntity>;
+  let jwtService: JwtService;
+  let ownerToken: string;
 
   beforeAll(async () => {
+    process.env.JWT_SECRET = 'test-secret';
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
@@ -45,6 +49,7 @@ describe('BarbershopServiceController (e2e)', () => {
     await app.init();
 
     dataSource = app.get(DataSource);
+    jwtService = app.get(JwtService);
     userRepository = dataSource.getRepository(UserEntity);
     barbershopRepository = dataSource.getRepository(BarbershopEntity);
   });
@@ -74,6 +79,8 @@ describe('BarbershopServiceController (e2e)', () => {
       state: 'NY',
       zipCode: '12345',
     });
+
+    ownerToken = jwtService.sign({ sub: 'user-1', email: 'owner@test.com' });
   });
 
   afterAll(async () => {
@@ -89,6 +96,7 @@ describe('BarbershopServiceController (e2e)', () => {
     it('should register a new barbershop service', () => {
       return request(app.getHttpServer())
         .post('/barbershop-service')
+        .set('Authorization', `Bearer ${ownerToken}`)
         .send({
           barbershopId: 'shop-1',
           name: 'Corte',
@@ -109,6 +117,7 @@ describe('BarbershopServiceController (e2e)', () => {
     it('should throw an error if name is empty', () => {
       return request(app.getHttpServer())
         .post('/barbershop-service')
+        .set('Authorization', `Bearer ${ownerToken}`)
         .send({
           barbershopId: 'shop-1',
           name: '',

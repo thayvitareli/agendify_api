@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { JwtService } from '@nestjs/jwt';
 import { CustomerEntity } from 'src/modules/customer/infrastructure/entity/customer.entity';
 import { UserEntity } from 'src/modules/user/infrastructure/entity/user.entity';
 import { BookingEntity } from 'src/modules/booking/infrastructure/entity/booking.entity';
@@ -20,8 +21,12 @@ describe('BookingController (e2e)', () => {
   let customerRepository: Repository<CustomerEntity>;
   let barbershopServiceRepository: Repository<BarbershopServiceEntity>;
   let bookingRepository: Repository<BookingEntity>;
+  let jwtService: JwtService;
+  let ownerToken: string;
+  let customerToken: string;
 
   beforeAll(async () => {
+    process.env.JWT_SECRET = 'test-secret';
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
@@ -48,6 +53,7 @@ describe('BookingController (e2e)', () => {
     await app.init();
 
     dataSource = app.get(DataSource);
+    jwtService = app.get(JwtService);
     userRepository = dataSource.getRepository(UserEntity);
     barbershopRepository = dataSource.getRepository(BarbershopEntity);
     customerRepository = dataSource.getRepository(CustomerEntity);
@@ -114,6 +120,12 @@ describe('BookingController (e2e)', () => {
       endAt: new Date('2025-12-20T10:30:00Z'),
       status: 'CONFIRMED',
     });
+
+    ownerToken = jwtService.sign({ sub: 'user-1', email: 'owner@test.com' });
+    customerToken = jwtService.sign({
+      sub: 'user-2',
+      email: 'customer@test.com',
+    });
   });
 
   afterAll(async () => {
@@ -129,6 +141,7 @@ describe('BookingController (e2e)', () => {
     it('should register a new booking', () => {
       return request(app.getHttpServer())
         .post('/booking')
+        .set('Authorization', `Bearer ${customerToken}`)
         .send({
           barbershopId: 'shop-1',
           serviceId: 'service-1',
@@ -143,13 +156,14 @@ describe('BookingController (e2e)', () => {
     it('should cancel a booking', () => {
       return request(app.getHttpServer())
         .post('/booking/booking-id/cancel')
+        .set('Authorization', `Bearer ${customerToken}`)
         .expect(201);
     });
 
     it('should throw an error when canceling a non-existent booking', async () => {
-      const resp = await request(app.getHttpServer()).post(
-        '/booking/no-existing-booking-id/cancel',
-      );
+      const resp = await request(app.getHttpServer())
+        .post('/booking/no-existing-booking-id/cancel')
+        .set('Authorization', `Bearer ${ownerToken}`);
 
       expect(resp.status).toBe(404);
       expect(resp.body.message).toBe('Booking not found');
@@ -160,6 +174,7 @@ describe('BookingController (e2e)', () => {
 
       const resp = await request(app.getHttpServer())
         .post('/booking/booking-id/cancel')
+        .set('Authorization', `Bearer ${ownerToken}`)
         .expect(409);
 
       expect(resp.status).toBe(409);

@@ -54,7 +54,7 @@ describe('RegisterBookingUseCase', () => {
       startAt: new Date('2025-12-24T10:00:00Z'),
     };
 
-    const result = await useCase.execute(input);
+    const result = await useCase.execute(input, 'u-1');
 
     expect(bookingRepo.findManyByBarbershopIdBetween).toHaveBeenCalledWith(
       'shop-1',
@@ -94,7 +94,7 @@ describe('RegisterBookingUseCase', () => {
       startAt: new Date('2025-12-24T10:00:00Z'),
     };
 
-    await expect(useCase.execute(input)).rejects.toThrow(
+    await expect(useCase.execute(input, 'u-1')).rejects.toThrow(
       'Booking time conflict',
     );
 
@@ -128,7 +128,7 @@ describe('RegisterBookingUseCase', () => {
       startAt: new Date('2025-12-24T10:00:00Z'),
     };
 
-    const result = await useCase.execute(input);
+    const result = await useCase.execute(input, 'u-1');
 
     expect(bookingRepo.save).toHaveBeenCalledTimes(1);
     expect(result).toBeInstanceOf(Booking);
@@ -151,7 +151,9 @@ describe('RegisterBookingUseCase', () => {
       startAt: new Date('2025-12-24T10:00:00Z'),
     };
 
-    await expect(useCase.execute(input)).rejects.toThrow('Customer not found');
+    await expect(useCase.execute(input, 'u-1')).rejects.toThrow(
+      'Customer not found',
+    );
 
     expect(bookingRepo.save).not.toHaveBeenCalled();
   });
@@ -173,8 +175,30 @@ describe('RegisterBookingUseCase', () => {
       startAt: new Date('2025-12-24T10:00:00Z'),
     };
 
-    await expect(useCase.execute(input)).rejects.toThrow(
+    await expect(useCase.execute(input, 'u-1')).rejects.toThrow(
       'Barbershop service not found',
+    );
+
+    expect(bookingRepo.save).not.toHaveBeenCalled();
+  });
+
+  it('should throw when actor does not own customer', async () => {
+    const useCase = new RegisterBookingUseCase(
+      bookingRepo,
+      customerRepo,
+      barbershopServiceRepo,
+    );
+
+    const input = {
+      id: 'b-id',
+      barbershopId: 'shop-1',
+      customerId: 'c-1',
+      serviceId: 's-1',
+      startAt: new Date('2025-12-24T10:00:00Z'),
+    };
+
+    await expect(useCase.execute(input, 'u-not-owner')).rejects.toThrow(
+      'Not allowed to create booking for customer',
     );
 
     expect(bookingRepo.save).not.toHaveBeenCalled();
