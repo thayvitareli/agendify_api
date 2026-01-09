@@ -20,7 +20,7 @@ import { BarbershopServiceModule } from './modules/barbershop-service/barbershop
     AuthModule,
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: ':memory:',
+      database: process.env.SQLITE_PATH ?? './agendify.sqlite',
       entities: [
         CustomerEntity,
         UserEntity,
@@ -28,9 +28,9 @@ import { BarbershopServiceModule } from './modules/barbershop-service/barbershop
         BarbershopEntity,
         BarbershopServiceEntity,
       ],
-      synchronize: true,
-      dropSchema: true,
-      logging: false,
+      synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
+      dropSchema: false,
+      logging: process.env.TYPEORM_LOGGING === 'true',
     }),
   ],
   controllers: [],
