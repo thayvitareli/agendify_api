@@ -7,7 +7,7 @@ import { UserEntity } from 'src/modules/user/infrastructure/entity/user.entity';
 import { BookingEntity } from 'src/modules/booking/infrastructure/entity/booking.entity';
 import { BarbershopEntity } from 'src/modules/barbershop/infrastructure/entity/barbershop.entity';
 import { BarbershopServiceEntity } from 'src/modules/barbershop-service/infrastructure/entity/barbershop-service.entity';
-import { AppModule } from 'src/app.module';
+import { BarbershopModule } from 'src/modules/barbershop/barbershop.module';
 
 describe('BarbershopController (e2e)', () => {
   let app: INestApplication;
@@ -29,7 +29,7 @@ describe('BarbershopController (e2e)', () => {
           dropSchema: true,
           logging: false,
         }),
-        AppModule,
+        BarbershopModule,
       ],
     }).compile();
 
