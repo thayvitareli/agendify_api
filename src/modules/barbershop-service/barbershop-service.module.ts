@@ -3,6 +3,7 @@ import { BarbershopServiceController } from './presentation/controller/barbersho
 import { TypeORMBarbershopServiceRepository } from './infrastructure/repositories/typeorm-barbershop-service.repository';
 import { TypeORMBarbershopRepository } from '../barbershop/infrastructure/repositories/typeorm-barbershop.repository';
 import { RegisterServiceUseCase } from './use-cases/register-service.use-case';
+import { ListServicesUseCase } from './use-cases/list-services.use-case';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BarbershopServiceEntity } from './infrastructure/entity/barbershop-service.entity';
 import { BarbershopEntity } from '../barbershop/infrastructure/entity/barbershop.entity';
@@ -17,6 +18,7 @@ import { JwtAuthGuard } from 'src/modules/auth/presentation/guards/jwt-auth.guar
   ],
   providers: [
     RegisterServiceUseCase,
+    ListServicesUseCase,
     JwtAuthGuard,
     {
       provide: 'IBarbershopServiceRepository',
