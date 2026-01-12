@@ -18,6 +18,7 @@ describe('RegisterServiceUseCase', () => {
     save: jest.fn(),
     findById: jest.fn(),
     findByBarbershopId: jest.fn(),
+    findMany: jest.fn(),
   };
 
   beforeEach(() => {
