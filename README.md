@@ -1,60 +1,80 @@
-✂️ **Agendify API**
+# Agendify API
 
-Agendify API is a backend application built with NestJS, created for study and learning purposes to practice and apply modern software architecture concepts such as:
+Backend API for a barbershop scheduling domain, built with NestJS. This project is intended for study/learning and focuses on a modular architecture (Clean Architecture / DDD-inspired) with use-cases, repositories, and clear boundaries between domain and HTTP.
 
-🧱 Clean Architecture
+## Features
 
-🧠 Domain-Driven Design (DDD)
+- Authentication via JWT (`/auth/sign-in`)
+- Register customer and barbershop
+- Create and list barbershop services (with optional filters)
+- Create, cancel, and list bookings for customer/barbershop
 
-🧪 Test-Driven Development (TDD)
+## Requirements
 
-🔁 Best practices for modularity, testability, and maintainability
+- Node.js + npm
+- SQLite (file-based) for local development (via TypeORM)
 
-The project domain is barbershop service scheduling, used as a realistic scenario to explore architectural patterns in a real-world–like system. <br>
+## Setup
 
- **Project Goals**
+```bash
+npm install
+```
 
-This project is not intended for production use. Its main goals are:
+Create a `.env` file based on `.env_example`.
 
-- Apply Clean Architecture principles in a NestJS application
-- Model the domain using DDD concepts
-- Develop business rules using TDD
-- Ensure low coupling and high cohesion
+## Running
 
-Make the system easy to test, refactor, and evolve
+```bash
+npm run start:dev
+```
 
-**Features**
-- User registration and login
-- Create a barbershops
-- Create services offered by barbershops
-- Create customer
-- Createand cancel appointments
+With `TYPEORM_SYNCHRONIZE=true`, TypeORM will create/update tables automatically in the SQLite file defined by `SQLITE_PATH`.
 
-**Architecture**
+## Testing
 
-The project follows Clean Architecture principles, keeping the core domain independent from frameworks and external details.
+```bash
+npm test
+```
 
-**Key Principles**
+- Unit tests use mocked repositories.
+- E2E tests configure their own in-memory SQLite database inside each test module (they do not depend on the app database file).
 
-- Dependencies always point towards the domain
-- Business rules do not depend on frameworks, databases, or delivery mechanisms
-- Use cases represent application intentions
-- Infrastructure is treated as a replaceable detail
-  
-The project is modular, and each module encapsulates its own domain and use cases.
+## API
 
-**Testing (TDD)**
+### Auth
 
-The project is designed to be developed using Test-Driven Development (TDD). <br><br>
+- `POST /auth/sign-in` → `{ "accessToken": "..." }`
 
-**Authentication (JWT)**
+### Customer
 
-- `POST /auth/sign-in` returns `{ "accessToken": "..." }`
-- Protected routes require `Authorization: Bearer <token>`
-- Env: set `JWT_SECRET` (defaults to `dev-secret` if not provided)
+- `POST /customer` → `{ user, customer }`
 
-**Authorization rules**
+### Barbershop
+
+- `POST /barbershop` → `{ user, barbershop }`
+
+### Barbershop Services
+
+- `POST /barbershop-service` (JWT) → creates a service for a barbershop
+- `GET /barbershop-service` → lists services (only active ones) with optional filters:
+  - `name`
+  - `minPrice`
+  - `maxPrice`
+  - `barbershopId`
+
+### Bookings
+
+- `POST /booking` (JWT) → create booking
+- `POST /booking/:id/cancel` (JWT) → cancel booking
+- `GET /booking/customer` (JWT) → list bookings for the logged-in customer
+- `GET /booking/barbershop` (JWT) → list bookings for the logged-in barbershop owner
+
+## Authorization rules
 
 - `POST /booking`: only the logged-in user that owns the `customerId` can create a booking
 - `POST /booking/:id/cancel`: only the booking's customer user or the barbershop owner can cancel
 - `POST /barbershop-service`: only the barbershop owner can create services for their barbershop
+
+## Notes
+
+- HTTP responses are mapped to DTOs (presenters) to avoid returning domain objects directly.
