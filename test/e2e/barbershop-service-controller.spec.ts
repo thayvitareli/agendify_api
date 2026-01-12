@@ -18,6 +18,7 @@ describe('BarbershopServiceController (e2e)', () => {
   let dataSource: DataSource;
   let userRepository: Repository<UserEntity>;
   let barbershopRepository: Repository<BarbershopEntity>;
+  let barbershopServiceRepository: Repository<BarbershopServiceEntity>;
   let jwtService: JwtService;
   let ownerToken: string;
 
@@ -52,6 +53,7 @@ describe('BarbershopServiceController (e2e)', () => {
     jwtService = app.get(JwtService);
     userRepository = dataSource.getRepository(UserEntity);
     barbershopRepository = dataSource.getRepository(BarbershopEntity);
+    barbershopServiceRepository = dataSource.getRepository(BarbershopServiceEntity);
   });
 
   beforeEach(async () => {
@@ -79,6 +81,33 @@ describe('BarbershopServiceController (e2e)', () => {
       state: 'NY',
       zipCode: '12345',
     });
+
+    await barbershopServiceRepository.save([
+      {
+        id: 'service-1',
+        barbershopId: 'shop-1',
+        name: 'Corte',
+        durationMinutes: 30,
+        price: 50,
+        active: true,
+      },
+      {
+        id: 'service-2',
+        barbershopId: 'shop-1',
+        name: 'Barba',
+        durationMinutes: 20,
+        price: 30,
+        active: true,
+      },
+      {
+        id: 'service-3',
+        barbershopId: 'shop-1',
+        name: 'Inativo',
+        durationMinutes: 15,
+        price: 10,
+        active: false,
+      },
+    ]);
 
     ownerToken = jwtService.sign({ sub: 'user-1', email: 'owner@test.com' });
   });
@@ -125,6 +154,50 @@ describe('BarbershopServiceController (e2e)', () => {
           price: 50,
         })
         .expect(500);
+    });
+  });
+
+  describe('GET /barbershop-service (List/Search)', () => {
+    it('should list only active services by default', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/barbershop-service')
+        .expect(200);
+
+      expect(resp.body.services).toHaveLength(2);
+      expect(resp.body.services.map((s: any) => s.id).sort()).toEqual([
+        'service-1',
+        'service-2',
+      ]);
+    });
+
+    it('should filter by name', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/barbershop-service?name=cor')
+        .expect(200);
+
+      expect(resp.body.services).toHaveLength(1);
+      expect(resp.body.services[0]).toMatchObject({ id: 'service-1' });
+    });
+
+    it('should filter by price range', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/barbershop-service?minPrice=40&maxPrice=60')
+        .expect(200);
+
+      expect(resp.body.services).toHaveLength(1);
+      expect(resp.body.services[0]).toMatchObject({ id: 'service-1' });
+    });
+
+    it('should filter by barbershopId', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/barbershop-service?barbershopId=shop-1')
+        .expect(200);
+
+      expect(resp.body.services).toHaveLength(2);
+      expect(resp.body.services.map((s: any) => s.id).sort()).toEqual([
+        'service-1',
+        'service-2',
+      ]);
     });
   });
 });

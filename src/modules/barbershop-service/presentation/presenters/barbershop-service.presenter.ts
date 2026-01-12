@@ -20,4 +20,8 @@ export class BarbershopServicePresenter {
       active: service.active,
     };
   }
+
+  static toHttpMany(services: BarbershopService[]): BarbershopServiceHttp[] {
+    return services.map((service) => this.toHttp(service));
+  }
 }
