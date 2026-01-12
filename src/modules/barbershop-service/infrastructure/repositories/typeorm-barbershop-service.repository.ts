@@ -4,6 +4,7 @@ import { BarbershopServiceEntity } from '../entity/barbershop-service.entity';
 import { BarbershopService } from '../../domain/model/barbershop-service.model';
 import { BarbershopServiceMapper } from '../../presentation/mappers/barbershop-service.mapper';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { BarbershopServiceSearchFilters } from '../../domain/repositories/barbershop-service.repository';
 
 export class TypeORMBarbershopServiceRepository implements IBarbershopServiceRepository {
   constructor(
@@ -34,5 +35,39 @@ export class TypeORMBarbershopServiceRepository implements IBarbershopServiceRep
       where: { id },
     });
     return entity ? BarbershopServiceMapper.toDomain(entity) : null;
+  }
+
+  async findMany(
+    filters: BarbershopServiceSearchFilters,
+  ): Promise<BarbershopService[]> {
+    const query = this.repository.createQueryBuilder('service');
+
+    if (filters.active != null) {
+      query.andWhere('service.active = :active', { active: filters.active });
+    }
+
+    if (filters.barbershopId) {
+      query.andWhere('service.barbershopId = :barbershopId', {
+        barbershopId: filters.barbershopId,
+      });
+    }
+
+    const trimmedName = filters.name?.trim();
+    if (trimmedName) {
+      query.andWhere('LOWER(service.name) LIKE LOWER(:name)', {
+        name: `%${trimmedName}%`,
+      });
+    }
+
+    if (filters.minPrice != null) {
+      query.andWhere('service.price >= :minPrice', { minPrice: filters.minPrice });
+    }
+
+    if (filters.maxPrice != null) {
+      query.andWhere('service.price <= :maxPrice', { maxPrice: filters.maxPrice });
+    }
+
+    const entities = await query.getMany();
+    return entities.map((entity) => BarbershopServiceMapper.toDomain(entity));
   }
 }
