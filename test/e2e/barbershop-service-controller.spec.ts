@@ -164,6 +164,11 @@ describe('BarbershopServiceController (e2e)', () => {
         .expect(200);
 
       expect(resp.body.services).toHaveLength(2);
+      expect(resp.body.pagination).toMatchObject({
+        page: 1,
+        limit: 20,
+        total: 2,
+      });
       expect(resp.body.services.map((s: any) => s.id).sort()).toEqual([
         'service-1',
         'service-2',

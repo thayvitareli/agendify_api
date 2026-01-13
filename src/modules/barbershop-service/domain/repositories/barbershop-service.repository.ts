@@ -6,6 +6,10 @@ export interface BarbershopServiceSearchFilters {
   maxPrice?: number;
   barbershopId?: string;
   active?: boolean;
+  page?: number;
+  limit?: number;
+  sortBy?: 'name' | 'price' | 'durationMinutes';
+  sortOrder?: 'ASC' | 'DESC';
 }
 
 export interface IBarbershopServiceRepository {
@@ -14,5 +18,5 @@ export interface IBarbershopServiceRepository {
   findByBarbershopId(barbershopId: string): Promise<BarbershopService[]>;
   findMany(
     filters: BarbershopServiceSearchFilters,
-  ): Promise<BarbershopService[]>;
+  ): Promise<{ services: BarbershopService[]; total: number }>;
 }

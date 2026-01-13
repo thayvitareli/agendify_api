@@ -27,7 +27,11 @@ export class BarbershopServiceController {
 
   @Get()
   async listServices(@Query() query: ListServicesQueryDto) {
-    const { services } = await this.listServicesUseCase.execute(query);
-    return { services: BarbershopServicePresenter.toHttpMany(services) };
+    const { services, total, page, limit } =
+      await this.listServicesUseCase.execute(query);
+    return {
+      services: BarbershopServicePresenter.toHttpMany(services),
+      pagination: { page, limit, total },
+    };
   }
 }

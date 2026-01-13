@@ -12,9 +12,10 @@ describe('ListServicesUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    serviceRepo.findMany.mockResolvedValue([
-      new BarbershopService('s-1', 'shop-1', 'Corte', 30, 50, true),
-    ]);
+    serviceRepo.findMany.mockResolvedValue({
+      services: [new BarbershopService('s-1', 'shop-1', 'Corte', 30, 50, true)],
+      total: 1,
+    });
   });
 
   it('should throw when minPrice is greater than maxPrice', async () => {
@@ -39,9 +40,16 @@ describe('ListServicesUseCase', () => {
       minPrice: 10,
       maxPrice: 100,
       active: true,
+      page: 1,
+      limit: 20,
+      sortBy: undefined,
+      sortOrder: undefined,
     });
     expect(result.services).toHaveLength(1);
     expect(result.services[0]).toBeInstanceOf(BarbershopService);
+    expect(result.total).toBe(1);
+    expect(result.page).toBe(1);
+    expect(result.limit).toBe(20);
   });
 
   it('should allow filtering by barbershopId', async () => {
@@ -55,6 +63,28 @@ describe('ListServicesUseCase', () => {
       maxPrice: undefined,
       barbershopId: 'shop-1',
       active: true,
+      page: 1,
+      limit: 20,
+      sortBy: undefined,
+      sortOrder: undefined,
+    });
+  });
+
+  it('should support pagination and sorting', async () => {
+    const useCase = new ListServicesUseCase(serviceRepo);
+
+    await useCase.execute({ page: 2, limit: 5, sortBy: 'price', sortOrder: 'DESC' });
+
+    expect(serviceRepo.findMany).toHaveBeenCalledWith({
+      name: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+      barbershopId: undefined,
+      active: true,
+      page: 2,
+      limit: 5,
+      sortBy: 'price',
+      sortOrder: 'DESC',
     });
   });
 });

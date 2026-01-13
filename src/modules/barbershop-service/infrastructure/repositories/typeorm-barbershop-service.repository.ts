@@ -39,7 +39,7 @@ export class TypeORMBarbershopServiceRepository implements IBarbershopServiceRep
 
   async findMany(
     filters: BarbershopServiceSearchFilters,
-  ): Promise<BarbershopService[]> {
+  ): Promise<{ services: BarbershopService[]; total: number }> {
     const query = this.repository.createQueryBuilder('service');
 
     if (filters.active != null) {
@@ -67,7 +67,18 @@ export class TypeORMBarbershopServiceRepository implements IBarbershopServiceRep
       query.andWhere('service.price <= :maxPrice', { maxPrice: filters.maxPrice });
     }
 
-    const entities = await query.getMany();
-    return entities.map((entity) => BarbershopServiceMapper.toDomain(entity));
+    const sortBy = filters.sortBy ?? 'name';
+    const sortOrder = filters.sortOrder ?? 'ASC';
+    query.orderBy(`service.${sortBy}`, sortOrder);
+
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 20;
+    query.skip((page - 1) * limit).take(limit);
+
+    const [entities, total] = await query.getManyAndCount();
+    return {
+      services: entities.map((entity) => BarbershopServiceMapper.toDomain(entity)),
+      total,
+    };
   }
 }
