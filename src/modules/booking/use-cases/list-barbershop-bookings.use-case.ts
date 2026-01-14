@@ -10,7 +10,15 @@ export class ListBarbershopBookingsUseCase {
     private readonly barbershopRepo: IBarbershopRepository,
   ) {}
 
-  async execute(actorUserId: string) {
+  async execute(
+    actorUserId: string,
+    input?: {
+      page?: number;
+      limit?: number;
+      sortBy?: 'startAt' | 'endAt' | 'status';
+      sortOrder?: 'ASC' | 'DESC' | 'asc' | 'desc';
+    },
+  ) {
     const barbershop = await this.barbershopRepo.findByOwnerUserId(actorUserId);
 
     if (!barbershop) {
@@ -22,10 +30,17 @@ export class ListBarbershopBookingsUseCase {
       );
     }
 
-    const bookings = await this.bookingRepo.findManyByBarbershopId(
+    const page = input?.page ?? 1;
+    const limit = input?.limit ?? 20;
+    const sortBy = input?.sortBy ?? 'startAt';
+    const sortOrder =
+      input?.sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
+    const { bookings, total } = await this.bookingRepo.findManyByBarbershopId(
       barbershop.id,
+      { page, limit, sortBy, sortOrder },
     );
 
-    return { bookings };
+    return { bookings, total, page, limit };
   }
 }

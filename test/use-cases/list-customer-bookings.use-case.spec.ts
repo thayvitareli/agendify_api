@@ -25,16 +25,19 @@ describe('ListCustomerBookingsUseCase', () => {
     customerRepo.findByUserId.mockResolvedValue(
       new Customer('customer-1', 'user-1', '99999999'),
     );
-    bookingRepo.findManyByCustomerId.mockResolvedValue([
-      new Booking(
-        'booking-1',
-        'shop-1',
-        'customer-1',
-        'service-1',
-        new Date('2025-12-24T10:00:00Z'),
-        new Date('2025-12-24T10:30:00Z'),
-      ),
-    ]);
+    bookingRepo.findManyByCustomerId.mockResolvedValue({
+      bookings: [
+        new Booking(
+          'booking-1',
+          'shop-1',
+          'customer-1',
+          'service-1',
+          new Date('2025-12-24T10:00:00Z'),
+          new Date('2025-12-24T10:30:00Z'),
+        ),
+      ],
+      total: 1,
+    });
   });
 
   it('should throw NotFoundException when customer is not found', async () => {
@@ -63,8 +66,12 @@ describe('ListCustomerBookingsUseCase', () => {
     const result = await useCase.execute('user-1');
 
     expect(customerRepo.findByUserId).toHaveBeenCalledWith('user-1');
-    expect(bookingRepo.findManyByCustomerId).toHaveBeenCalledWith('customer-1');
+    expect(bookingRepo.findManyByCustomerId).toHaveBeenCalledWith(
+      'customer-1',
+      { page: 1, limit: 20, sortBy: 'startAt', sortOrder: 'ASC' },
+    );
     expect(result.bookings).toHaveLength(1);
     expect(result.bookings[0]).toBeInstanceOf(Booking);
+    expect(result.total).toBe(1);
   });
 });

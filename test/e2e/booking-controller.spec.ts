@@ -189,6 +189,11 @@ describe('BookingController (e2e)', () => {
         .set('Authorization', `Bearer ${customerToken}`)
         .expect(200);
       expect(resp.body.bookings).toHaveLength(1);
+      expect(resp.body.pagination).toMatchObject({
+        page: 1,
+        limit: 20,
+        total: 1,
+      });
     });
 
     it('should return 404 when user is not a customer', async () => {
@@ -209,6 +214,11 @@ describe('BookingController (e2e)', () => {
         .expect(200);
 
       expect(resp.body.bookings).toHaveLength(1);
+      expect(resp.body.pagination).toMatchObject({
+        page: 1,
+        limit: 20,
+        total: 1,
+      });
     });
 
     it('should return 404 when user is not a barbershop owner', async () => {

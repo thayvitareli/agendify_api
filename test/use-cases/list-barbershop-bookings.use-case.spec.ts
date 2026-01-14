@@ -32,24 +32,27 @@ describe('ListBarbershopBookingsUseCase', () => {
         new Address('Main', '1', 'City', 'ST', '00000'),
       ),
     );
-    bookingRepo.findManyByBarbershopId.mockResolvedValue([
-      new Booking(
-        'booking-1',
-        'shop-1',
-        'customer-1',
-        'service-1',
-        new Date('2025-12-24T10:00:00Z'),
-        new Date('2025-12-24T10:30:00Z'),
-      ),
-      new Booking(
-        'booking-2',
-        'shop-1',
-        'customer-2',
-        'service-1',
-        new Date('2025-12-24T11:00:00Z'),
-        new Date('2025-12-24T11:30:00Z'),
-      ),
-    ]);
+    bookingRepo.findManyByBarbershopId.mockResolvedValue({
+      bookings: [
+        new Booking(
+          'booking-1',
+          'shop-1',
+          'customer-1',
+          'service-1',
+          new Date('2025-12-24T10:00:00Z'),
+          new Date('2025-12-24T10:30:00Z'),
+        ),
+        new Booking(
+          'booking-2',
+          'shop-1',
+          'customer-2',
+          'service-1',
+          new Date('2025-12-24T11:00:00Z'),
+          new Date('2025-12-24T11:30:00Z'),
+        ),
+      ],
+      total: 2,
+    });
   });
 
   it('should throw NotFoundException when barbershop is not found', async () => {
@@ -95,8 +98,12 @@ describe('ListBarbershopBookingsUseCase', () => {
     const result = await useCase.execute('user-1');
 
     expect(barbershopRepo.findByOwnerUserId).toHaveBeenCalledWith('user-1');
-    expect(bookingRepo.findManyByBarbershopId).toHaveBeenCalledWith('shop-1');
+    expect(bookingRepo.findManyByBarbershopId).toHaveBeenCalledWith(
+      'shop-1',
+      { page: 1, limit: 20, sortBy: 'startAt', sortOrder: 'ASC' },
+    );
     expect(result.bookings).toHaveLength(2);
     expect(result.bookings[0]).toBeInstanceOf(Booking);
+    expect(result.total).toBe(2);
   });
 });

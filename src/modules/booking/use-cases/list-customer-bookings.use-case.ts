@@ -10,7 +10,15 @@ export class ListCustomerBookingsUseCase {
     private readonly customerRepo: ICustomerRepository,
   ) {}
 
-  async execute(actorUserId: string) {
+  async execute(
+    actorUserId: string,
+    input?: {
+      page?: number;
+      limit?: number;
+      sortBy?: 'startAt' | 'endAt' | 'status';
+      sortOrder?: 'ASC' | 'DESC' | 'asc' | 'desc';
+    },
+  ) {
     const customer = await this.customerRepo.findByUserId(actorUserId);
 
     if (!customer) {
@@ -22,8 +30,17 @@ export class ListCustomerBookingsUseCase {
         'Not allowed to list bookings for this customer',
       );
     }
-    const bookings = await this.bookingRepo.findManyByCustomerId(customer.id);
+    const page = input?.page ?? 1;
+    const limit = input?.limit ?? 20;
+    const sortBy = input?.sortBy ?? 'startAt';
+    const sortOrder =
+      input?.sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
-    return { bookings };
+    const { bookings, total } = await this.bookingRepo.findManyByCustomerId(
+      customer.id,
+      { page, limit, sortBy, sortOrder },
+    );
+
+    return { bookings, total, page, limit };
   }
 }

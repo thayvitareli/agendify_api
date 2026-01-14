@@ -275,10 +275,11 @@ describe('TypeORMBookingRepository', () => {
     );
     await bookingRepository.save(booking1);
     await bookingRepository.save(booking2);
-    const foundBookings = await bookingRepository.findManyByBarbershopId(
+    const { bookings: foundBookings, total } = await bookingRepository.findManyByBarbershopId(
       savedBarbershop.id,
     );
     expect(foundBookings).toHaveLength(2);
+    expect(total).toBe(2);
     expect(foundBookings[0]).toBeInstanceOf(Booking);
     expect(foundBookings[1]).toBeInstanceOf(Booking);
     expect(foundBookings[0].barbershopId).toBe(savedBarbershop.id);
@@ -349,10 +350,11 @@ describe('TypeORMBookingRepository', () => {
     );
     await bookingRepository.save(booking1);
     await bookingRepository.save(booking2);
-    const foundBookings = await bookingRepository.findManyByCustomerId(
+    const { bookings: foundBookings, total } = await bookingRepository.findManyByCustomerId(
       customer.id,
     );
     expect(foundBookings).toHaveLength(2);
+    expect(total).toBe(2);
     expect(foundBookings[0]).toBeInstanceOf(Booking);
     expect(foundBookings[1]).toBeInstanceOf(Booking);
     expect(foundBookings[0].customerId).toBe(customer.id);

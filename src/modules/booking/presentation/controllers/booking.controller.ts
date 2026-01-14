@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { RegisterBookingUseCase } from '../../use-cases/register-booking.use-case';
 import { RegisterBookingDto } from '../dtos/register-booking.dto';
 import { CancelBookingUseCase } from '../../use-cases/cancel-booking.use-case';
@@ -8,6 +8,7 @@ import type { AuthUser } from 'src/modules/auth/presentation/types/auth-user';
 import { ListCustomerBookingsUseCase } from '../../use-cases/list-customer-bookings.use-case';
 import { ListBarbershopBookingsUseCase } from '../../use-cases/list-barbershop-bookings.use-case';
 import { BookingPresenter } from '../presenters/booking.presenter';
+import { ListBookingsQueryDto } from '../dto/list-bookings.query.dto';
 
 @Controller('booking')
 @UseGuards(JwtAuthGuard)
@@ -35,18 +36,38 @@ export class BookingController {
   }
 
   @Get('customer')
-  async listCustomerBookings(@CurrentUser() user: AuthUser) {
-    const { bookings } = await this.listCustomerBookingsUseCase.execute(
-      user.userId,
-    );
-    return { bookings: BookingPresenter.toHttpMany(bookings) };
+  async listCustomerBookings(
+    @CurrentUser() user: AuthUser,
+    @Query() query: ListBookingsQueryDto,
+  ) {
+    const { bookings, total, page, limit } =
+      await this.listCustomerBookingsUseCase.execute(user.userId, {
+        page: query.page,
+        limit: query.limit,
+        sortBy: query.sortBy,
+        sortOrder: query.sortOrder,
+      });
+    return {
+      bookings: BookingPresenter.toHttpMany(bookings),
+      pagination: { page, limit, total },
+    };
   }
 
   @Get('barbershop')
-  async listBarbershopBookings(@CurrentUser() user: AuthUser) {
-    const { bookings } = await this.listBarbershopBookingsUseCase.execute(
-      user.userId,
-    );
-    return { bookings: BookingPresenter.toHttpMany(bookings) };
+  async listBarbershopBookings(
+    @CurrentUser() user: AuthUser,
+    @Query() query: ListBookingsQueryDto,
+  ) {
+    const { bookings, total, page, limit } =
+      await this.listBarbershopBookingsUseCase.execute(user.userId, {
+        page: query.page,
+        limit: query.limit,
+        sortBy: query.sortBy,
+        sortOrder: query.sortOrder,
+      });
+    return {
+      bookings: BookingPresenter.toHttpMany(bookings),
+      pagination: { page, limit, total },
+    };
   }
 }

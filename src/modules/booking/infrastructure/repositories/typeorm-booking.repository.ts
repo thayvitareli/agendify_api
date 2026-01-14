@@ -20,14 +20,55 @@ export class TypeORMBookingRepository implements IBookingRepository {
     const entity = await this.repository.findOne({ where: { id } });
     return entity ? BookingMapper.toDomain(entity) : null;
   }
-  async findManyByBarbershopId(barbershopId: string): Promise<Booking[]> {
-    const entities = await this.repository.find({ where: { barbershopId } });
-    return entities.map(BookingMapper.toDomain);
+
+  async findManyByCustomerId(
+    customerId: string,
+    options?: {
+      page?: number;
+      limit?: number;
+      sortBy?: 'startAt' | 'endAt' | 'status';
+      sortOrder?: 'ASC' | 'DESC';
+    },
+  ): Promise<{ bookings: Booking[]; total: number }> {
+    const sortBy = options?.sortBy ?? 'startAt';
+    const sortOrder = options?.sortOrder ?? 'ASC';
+    const page = options?.page ?? 1;
+    const limit = options?.limit ?? 20;
+
+    const query = this.repository
+      .createQueryBuilder('booking')
+      .where('booking.customerId = :customerId', { customerId })
+      .orderBy(`booking.${sortBy}`, sortOrder)
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [entities, total] = await query.getManyAndCount();
+    return { bookings: entities.map(BookingMapper.toDomain), total };
   }
 
-  async findManyByCustomerId(customerId: string): Promise<Booking[]> {
-    const entities = await this.repository.find({ where: { customerId } });
-    return entities.map(BookingMapper.toDomain);
+  async findManyByBarbershopId(
+    barbershopId: string,
+    options?: {
+      page?: number;
+      limit?: number;
+      sortBy?: 'startAt' | 'endAt' | 'status';
+      sortOrder?: 'ASC' | 'DESC';
+    },
+  ): Promise<{ bookings: Booking[]; total: number }> {
+    const sortBy = options?.sortBy ?? 'startAt';
+    const sortOrder = options?.sortOrder ?? 'ASC';
+    const page = options?.page ?? 1;
+    const limit = options?.limit ?? 20;
+
+    const query = this.repository
+      .createQueryBuilder('booking')
+      .where('booking.barbershopId = :barbershopId', { barbershopId })
+      .orderBy(`booking.${sortBy}`, sortOrder)
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [entities, total] = await query.getManyAndCount();
+    return { bookings: entities.map(BookingMapper.toDomain), total };
   }
 
   async findManyByBarbershopIdBetween(
