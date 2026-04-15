@@ -4,6 +4,8 @@ import type { ICustomerRepository } from 'src/modules/customer/domain/repositori
 import type { IBarbershopServiceRepository } from 'src/modules/barbershop-service/domain/repositories/barbershop-service.repository';
 import { v4 as uuid } from 'uuid';
 import { RegisterBookingDto } from '../presentation/dtos/register-booking.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { BookingCreatedEvent } from 'src/shared/events/booking.events';
 import { ForbiddenException, Inject } from '@nestjs/common';
 
 export class RegisterBookingUseCase {
@@ -14,6 +16,7 @@ export class RegisterBookingUseCase {
     private readonly customerRepo: ICustomerRepository,
     @Inject('IBarbershopServiceRepository')
     private readonly barbershopServiceRepo: IBarbershopServiceRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute(input: RegisterBookingDto, actorUserId: string) {
@@ -72,6 +75,17 @@ export class RegisterBookingUseCase {
     );
 
     await this.bookingRepo.save(booking);
+
+    this.eventEmitter.emit(
+      'booking.created',
+      new BookingCreatedEvent(
+        booking.id,
+        booking.barbershopId,
+        booking.customerId,
+        booking.serviceId,
+        service.price,
+      ),
+    );
 
     return booking;
   }

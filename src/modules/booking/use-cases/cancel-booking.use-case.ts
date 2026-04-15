@@ -2,6 +2,8 @@ import { ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
 import type { IBookingRepository } from '../domain/repositories/booking.repository';
 import type { ICustomerRepository } from 'src/modules/customer/domain/repositories/customer.repository';
 import type { IBarbershopRepository } from 'src/modules/barbershop/domain/repositories/barbershop.repository';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { BookingCanceledEvent } from 'src/shared/events/booking.events';
 
 export class CancelBookingUseCase {
   constructor(
@@ -11,6 +13,7 @@ export class CancelBookingUseCase {
     private readonly customerRepo: ICustomerRepository,
     @Inject('IBarbershopRepository')
     private readonly barbershopRepo: IBarbershopRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute(input: { id: string }, actorUserId: string) {
@@ -33,6 +36,11 @@ export class CancelBookingUseCase {
     booking.cancel();
 
     await this.bookingRepo.save(booking);
+
+    this.eventEmitter.emit(
+      'booking.canceled',
+      new BookingCanceledEvent(booking.id, isShopOwner),
+    );
 
     return booking;
   }

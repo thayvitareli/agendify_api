@@ -10,6 +10,10 @@ import { BarbershopEntity } from './modules/barbershop/infrastructure/entity/bar
 import { BarbershopServiceEntity } from './modules/barbershop-service/infrastructure/entity/barbershop-service.entity';
 import { BarbershopModule } from './modules/barbershop/barbershop.module';
 import { BarbershopServiceModule } from './modules/barbershop-service/barbershop-service.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PaymentModule } from './modules/payment/payment.module';
+import { BookingPaymentEntity } from './modules/payment/infrastructure/entity/booking-payment.entity';
+import { BarbershopStripeAccountEntity } from './modules/payment/infrastructure/entity/barbershop-stripe-account.entity';
 
 @Module({
   imports: [
@@ -18,6 +22,8 @@ import { BarbershopServiceModule } from './modules/barbershop-service/barbershop
     BarbershopServiceModule,
     BookingModule,
     AuthModule,
+    PaymentModule,
+    EventEmitterModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: process.env.SQLITE_PATH ?? './agendify.sqlite',
@@ -27,6 +33,8 @@ import { BarbershopServiceModule } from './modules/barbershop-service/barbershop
         BookingEntity,
         BarbershopEntity,
         BarbershopServiceEntity,
+        BookingPaymentEntity,
+        BarbershopStripeAccountEntity,
       ],
       synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
       dropSchema: false,
